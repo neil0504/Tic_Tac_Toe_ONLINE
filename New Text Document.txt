@@ -1,0 +1,58 @@
+//        invertControl.setOnClickListener { v ->
+//            val b = v as Button
+//
+//            if (re_set) {
+//                b.startAnimation(scale_up)
+//                b.startAnimation(scale_down)
+//                isInverted = !isInverted
+//                if (isInverted) {
+//                    p1 = 2
+//                    p2 = 1
+//                    instruction.setText("Player 1 : O\nPlayer 2 : X")
+//                } else {
+//                    p1 = 1
+//                    p2 = 2
+//
+//                    instruction.setText("Player 1: X\nPlayer 2 : O")
+//                }
+//            } else {
+//                b.startAnimation(myAnim)
+//            }
+//
+//
+//        }
+
+//        turnButton.setOnClickListener { v ->
+//            val b = v as Button
+//            if (re_set) {
+//                b.startAnimation(scale_up)
+//                b.startAnimation(scale_down)
+//                if (!turnIsInverted) {
+//                    if (count == 1) {
+//                        count = 0
+//                    } else {
+//                        count += 1
+//                    }
+//                    turn.setText("Player 2's Turn")
+//                    turnIsInverted = !turnIsInverted
+//                    id1_ = null
+//                } else {
+//                    turn.setText("Player 1's Turn")
+//                    turnIsInverted = !turnIsInverted
+//                    id1_ = null
+//                }
+//            } else {
+//                b.startAnimation(myAnim)
+//            }
+//        }
+
+//        breset.setOnClickListener { v ->
+//            val b = v as Button
+//            b.startAnimation(scale_up)
+//            b.startAnimation(scale_down)
+//            re_start()
+//            sp1 = 0
+//            sp2 = 0
+//            sp = arrayOf(sp1, sp2)
+//            scoreText.setText("Player 1 : ${sp[0]}  |  PLayer 2 : ${sp[1]} ")
+//        }
