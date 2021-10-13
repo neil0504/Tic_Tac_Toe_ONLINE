@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Tic_Tac_Toe_ONLINE</string>
+    <string name="default_web_client_id_" translatable="false">56718567118-203sao529i2o822p412o15n6b2cpnorl.apps.googleusercontent.com</string>
+    <string name="open">OPEN</string>
+    <string name="close">CLOSE</string>
+    <string name="guest">Guest</string>
+    <string name="signOut">Sign Out</string>
 </resources>
