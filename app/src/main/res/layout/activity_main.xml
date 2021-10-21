@@ -9,9 +9,28 @@
     android:id="@+id/drawerLayout"
     android:layoutDirection="ltr"
     tools:openDrawer="start">
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#EADDDD"
+            android:padding="5dp">
+
+            <include
+                layout="@layout/notif_bell"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp" />
+        </androidx.appcompat.widget.Toolbar>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar">
         <com.google.android.gms.common.SignInButton
             android:id="@+id/signIn"
             android:layout_width="wrap_content"
@@ -89,8 +108,18 @@
             app:layout_constraintTop_toBottomOf="@+id/b_offline"
             app:layout_constraintVertical_bias="0.946" />
 
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/notif_fragment_container"
+                android:layout_width="269dp"
+                android:layout_height="379dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
@@ -99,6 +128,9 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/nav_drawer_menu" />
+        app:menu="@menu/nav_drawer_menu"
+        android:layout_marginTop="?attr/actionBarSize"
+        />
+
 
 </androidx.drawerlayout.widget.DrawerLayout>

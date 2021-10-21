@@ -33,7 +33,7 @@ class OnlineConnection : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_online_connection)
-
+        val obj = InvitationFragment()
         introText = findViewById(R.id.textView)
         codeText = findViewById(R.id.et)
         bJoin = findViewById(R.id.b_join)
@@ -69,6 +69,10 @@ class OnlineConnection : AppCompatActivity() {
 
 
         bCreate.setOnClickListener {
+            val fragmentManager = supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.replace(R.id.invitationFragmentContainer, obj)
+            fragmentTransaction.commit()
             code = null
             codeFound = false
             checkTemp = true

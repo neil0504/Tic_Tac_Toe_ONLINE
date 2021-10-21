@@ -12,7 +12,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.tic_tac_toe_online.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -38,19 +40,35 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
     private lateinit var navigationView: NavigationView
     private lateinit var name: TextView
     private var signedIn = false
+    lateinit var binding: ActivityMainBinding
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+//        val layout = layoutInflater.inflate(R.layout.notif_bell, null)
+        val obj = NotificationFragment()
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
-        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,  R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+//        val view = layoutInflater.inflate(R.layout.notif_bell, null)
+        val bell = toolbar.findViewById<ImageView>(R.id.notif_icon)
+        val obj2 = NotificationCounter(toolbar.findViewById(R.id.bell))
+        bell.setOnClickListener{
+            obj2.increaseNumber()
+            Toast.makeText(this, "Bell Clicked", Toast.LENGTH_SHORT).show()
+            val fragmentManager = supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.replace(R.id.notif_fragment_container, obj)
+            fragmentTransaction.commit()
+        }
         navigationView = findViewById(R.id.navigationView)
 
         navigationView.setNavigationItemSelectedListener {
@@ -211,6 +229,8 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
             Log.d(TAG, "account is not null")
         }
     }
+
+
 
 
 }
