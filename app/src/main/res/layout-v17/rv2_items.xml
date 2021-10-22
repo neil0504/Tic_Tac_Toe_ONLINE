@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5sp">
+
+    <ImageView
+        android:id="@+id/invite_player_profile"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/guest" />
+
+    <TextView
+        android:layout_width="230sp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="10sp"
+        android:layout_marginEnd="10sp"
+        android:layout_marginRight="10sp"
+        android:fontFamily="@font/aclonica"
+        android:text="Player Name"
+        android:textSize="17sp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:layout_marginRight="16sp"
+        android:text="INVITE"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
+
+</LinearLayout>

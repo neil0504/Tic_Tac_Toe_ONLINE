@@ -1,5 +1,7 @@
 package com.example.tic_tac_toe_online
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
@@ -120,6 +122,16 @@ class OnlinePlay : AppCompatActivity() {
     private lateinit var winMusic: MediaPlayer
     private lateinit var looseMusic: MediaPlayer
 
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+    var id_stringset: MutableSet<String>? = null
+    var name_stringset: MutableSet<String>? = null
+    var email_stringset: MutableSet<String>? = null
+    var name_ = ""
+    var email = ""
+    var id = ""
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -191,6 +203,71 @@ class OnlinePlay : AppCompatActivity() {
         button9.alpha = 1f
         if(isMymove)
         {
+            if (account!= null) {
+                var sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
+                id_stringset = sharedPreferences.getStringSet("ID", null)
+                name_stringset = sharedPreferences.getStringSet("NAME", null)
+                email_stringset = sharedPreferences.getStringSet("EMAIL", null)
+                Log.d("*****", "ID set = $id_stringset")
+                Log.d("*****", "namee set = $name_stringset")
+                Log.d("*****", "email set = $email_stringset")
+
+
+
+                FirebaseDatabase.getInstance().reference.child("Details")
+                    .child(code!!).child("Joining").child("name").addValueEventListener(object :ValueEventListener
+                    {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            name_ = snapshot.value.toString()
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+
+                    })
+
+                FirebaseDatabase.getInstance().reference.child("Details")
+                    .child(code!!).child("Joining").child("email").addValueEventListener(object : ValueEventListener{
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            email = snapshot.value.toString()
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+
+                    })
+
+                FirebaseDatabase.getInstance().reference.child("Details")
+                    .child(code!!).child("Joining").child("id").addValueEventListener(object : ValueEventListener{
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            id = snapshot.value.toString()
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+
+                    })
+                id_stringset!!.add(id)
+                name_stringset!!.add(name_)
+                email_stringset!!.add(email)
+                Log.d("*****", "Updated ID set = $id_stringset")
+                Log.d("*****", "Updated name set = $name_stringset")
+                Log.d("*****", "Updated email set = $email_stringset")
+
+                sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
+                editor = sharedPreferences.edit()
+                editor.apply{
+                    putStringSet("ID", id_stringset)
+                    putStringSet("NAME", name_stringset)
+                    putStringSet("EMAIL", email_stringset)
+
+                }
+            }
+
+            Toast.makeText(this, "You are the Creator. U r playing with $name with email: $email", Toast.LENGTH_LONG).show()
             turn.text = "Your Turn"
             instruction.text = "Your Shape : X"
             codeText.text = "CODE : $code!!"
@@ -198,6 +275,11 @@ class OnlinePlay : AppCompatActivity() {
         }
         else
         {
+            val email = FirebaseDatabase.getInstance().reference.child("Details")
+                .child(code!!).child("Creator").child("email").get()
+            val name = FirebaseDatabase.getInstance().reference.child("Details")
+                .child(code!!).child("Creator").child("name").get()
+            Toast.makeText(this, "You are the Joiner. U r playing with $name with email: $email", Toast.LENGTH_LONG).show()
             turn.text = "Opponent's Turn"
             instruction.text = "Your Shape : O"
             codeText.visibility = View.GONE

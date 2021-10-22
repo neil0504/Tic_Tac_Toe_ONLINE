@@ -10,10 +10,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 
 var isCodemaker = false
@@ -41,15 +38,6 @@ class OnlineConnection : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         info = findViewById(R.id.imageView)
         cordLayout = findViewById(R.id.coordinatorLayout)
-
-
-//        val sbar: Snackbar = Snackbar.make(cordLayout, "One Player needs to 'CREATE' a unique code to create a game session\n(For that enter a unique code in the editor and press CREATE)\nThe other Player needs to enter the same code in the editor and press JOIN button to join the game sesion", Snackbar.LENGTH_LONG)
-//        sbar.duration = 5000
-//        sbar.setAction("DISMISS", View.OnClickListener {  })
-//
-//        val layout: Snackbar.SnackbarLayout = SnackbarLayout(this, )
-//
-//        sbar.getView().minimumHeight = 200
 
 
         info.setOnTouchListener { v, event ->
@@ -104,6 +92,24 @@ class OnlineConnection : AppCompatActivity() {
                                 else
                                 {
                                     FirebaseDatabase.getInstance().reference.child("codes").push().setValue(code)
+                                    val name: String?
+                                    val email: String?
+                                    if (account != null)
+                                    {
+                                        name = account!!.displayName
+                                        email = account!!.email
+                                        FirebaseDatabase.getInstance().reference.child("Details")
+                                            .child(code!!).child("Creator").child("name").setValue(name)
+                                        FirebaseDatabase.getInstance().reference.child("Details")
+                                            .child(code!!).child("Creator").child("email")
+                                            .setValue(email)
+                                        FirebaseDatabase.getInstance().reference.child("Details")
+                                            .child(code!!).child("Creator").child("id")
+                                            .setValue(account!!.id)
+
+
+                                    }
+//                                    FirebaseDatabase.getInstance().reference.child("codes"). child("Details").child("Creator").push().setValue()
 //                                    isValueAvailable(snapshot, code!!)
                                     checkTemp = false
                                     Handler().postDelayed({
@@ -153,10 +159,29 @@ class OnlineConnection : AppCompatActivity() {
                 FirebaseDatabase.getInstance().reference.child("codes").addValueEventListener(object : ValueEventListener{
                     override fun onDataChange(p0: DataSnapshot) {
                         val data: Boolean = isValueAvailable(p0, code!!)
+                        var name: String? = null
+                        var email: String? = null
+                        if (data) {
+
+                            if (account != null) {
+                                name = account!!.displayName
+                                email = account!!.email
+                                FirebaseDatabase.getInstance().reference.child("Details")
+                                    .child(code!!).child("Joining").child("name")
+                                    .setValue(name)
+                                FirebaseDatabase.getInstance().reference.child("Details")
+                                    .child(code!!).child("Joining").child("email")
+                                    .setValue(email)
+                                FirebaseDatabase.getInstance().reference.child("Details")
+                                    .child(code!!).child("Joining").child("id")
+                                    .setValue(account!!.id)
+                            }
+                        }
                         Handler().postDelayed({
                             if (data)
                             {
                                 codeFound = true
+
                                 accepted()
                                 introText.visibility = View.VISIBLE
                                 codeText.visibility = View.VISIBLE

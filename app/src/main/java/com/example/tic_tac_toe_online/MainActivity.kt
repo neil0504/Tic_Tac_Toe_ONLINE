@@ -19,7 +19,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.GoogleApiClient
@@ -27,10 +26,10 @@ import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
 import com.squareup.picasso.Picasso
 
-
-class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedListener {
+var account: GoogleSignInAccount? = null
+class MainActivity : AppCompatActivity(){
     lateinit var toggle: ActionBarDrawerToggle
-    val TAG = "MainActivity"
+    val TAG = "*********"
     private lateinit var logIn: SignInButton
     private lateinit var logOut: Button
     private lateinit var googleApiClient: GoogleApiClient
@@ -49,7 +48,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        val layout = layoutInflater.inflate(R.layout.notif_bell, null)
+
         val obj = NotificationFragment()
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -58,7 +57,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-//        val view = layoutInflater.inflate(R.layout.notif_bell, null)
+
         val bell = toolbar.findViewById<ImageView>(R.id.notif_icon)
         val obj2 = NotificationCounter(toolbar.findViewById(R.id.bell))
         bell.setOnClickListener{
@@ -87,9 +86,12 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                                 }
                                 else
                                 {
-                                    Toast.makeText(this, "Sign Out successfull", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, "Sign Out Uncessfull", Toast.LENGTH_SHORT).show()
                                 }
                             }
+                    }
+                    else{
+                        Toast.makeText(this, "No account found to Signout", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -100,7 +102,6 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         val online_btn: Button = findViewById(R.id.b_online)
         val offline_btn: Button = findViewById(R.id.b_offline)
         logIn = findViewById(R.id.signIn)
-        logOut = findViewById(R.id.signOut)
 
 
         navigationView = findViewById(R.id.navigationView)
@@ -115,10 +116,6 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
 
         logIn.setOnClickListener {
             signIn()
-        }
-
-        logOut.setOnClickListener {
-            signOut()
         }
 
         val online = View.OnClickListener { v ->
@@ -139,21 +136,21 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
 
     }
 
-    private fun signOut() {
-        mGoogleSignInClient.signOut()
-            .addOnCompleteListener {
-                if (it.isSuccessful)
-                {
-                    Toast.makeText(this, "Sign Out successfull", Toast.LENGTH_SHORT).show()
-                    img.setImageResource(R.drawable.guest)
-                    name.text = R.string.guest.toString()
-                }
-                else
-                {
-                    Toast.makeText(this, "Sign Out successfull", Toast.LENGTH_SHORT).show()
-                }
-            }
-    }
+//    private fun signOut() {
+//        mGoogleSignInClient.signOut()
+//            .addOnCompleteListener {
+//                if (it.isSuccessful)
+//                {
+//                    Toast.makeText(this, "Sign Out successfull", Toast.LENGTH_SHORT).show()
+//                    img.setImageResource(R.drawable.guest)
+//                    name.text = R.string.guest.toString()
+//                }
+//                else
+//                {
+//                    Toast.makeText(this, "Sign Out successfull", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item))
@@ -196,30 +193,17 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         }
     }
 
-    private fun updateUI(account: GoogleSignInAccount?) {
-        if (account != null)
-        {
+    private fun updateUI(acc: GoogleSignInAccount?) {
+        if (acc != null) {
+            account = acc
             signedIn = true
-//            val img = account.photoUrl
-            Picasso.get().load(account.photoUrl).placeholder(R.mipmap.ic_launcher).into(img)
+            Picasso.get().load(acc.photoUrl).placeholder(R.mipmap.ic_launcher).into(img)
             name.text = ""
-            name.text = account.givenName
+            name.text = acc.givenName
+            Toast.makeText(this, "SignIn Successful", Toast.LENGTH_SHORT).show()
         }
 
     }
-
-//    private fun updateUI(acc: GoogleSignInAccount?) {
-//        if (acc != null)
-//        {
-//
-//        }
-//
-//    }
-
-    override fun onConnectionFailed(p0: ConnectionResult) {
-        TODO("Not yet implemented")
-    }
-
     override fun onStart() {
         super.onStart()
         val account = GoogleSignIn.getLastSignedInAccount(this)
@@ -229,8 +213,4 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
             Log.d(TAG, "account is not null")
         }
     }
-
-
-
-
 }

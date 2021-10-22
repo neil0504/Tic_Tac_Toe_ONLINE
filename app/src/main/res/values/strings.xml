@@ -7,4 +7,6 @@
     <string name="signOut">Sign Out</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="lobby">Lobby</string>
+    <string name="invite_players">Invite Players</string>
 </resources>
