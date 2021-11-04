@@ -94,14 +94,14 @@
             app:layout_constraintStart_toStartOf="@+id/b_online"
             app:layout_constraintTop_toBottomOf="@+id/b_online" />
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/notif_fragment_container"
-                android:layout_width="269dp"
-                android:layout_height="379dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/notif_fragment_container"
+            android:layout_width="269dp"
+            android:layout_height="379dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

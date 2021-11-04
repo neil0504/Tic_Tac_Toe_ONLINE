@@ -20,7 +20,7 @@ class BlogRecyclerViewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(holder){
             is BlogViewHolder -> {
-                holder.bind(items.get(position))
+                holder.bind(items[position])
             }
         }
     }

@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(){
     private lateinit var navigationView: NavigationView
     private lateinit var name: TextView
     private var signedIn = false
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
 
 

@@ -124,14 +124,22 @@ class OnlinePlay : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
-    var id_stringset: MutableSet<String>? = null
-    var name_stringset: MutableSet<String>? = null
-    var email_stringset: MutableSet<String>? = null
-    var name_ = ""
-    var email = ""
-    var id = ""
-
-
+    var id_stringsetC: MutableSet<String?>? =  mutableSetOf()
+    var name_stringsetC: MutableSet<String?>? =  mutableSetOf()
+    var email_stringsetC: MutableSet<String?>? = mutableSetOf()
+    var photoURL_stringsetC: MutableSet<String?>? = mutableSetOf()
+    var id_stringsetJ: MutableSet<String?>? = mutableSetOf()
+    var name_stringsetJ: MutableSet<String?>? = mutableSetOf()
+    var email_stringsetJ: MutableSet<String?>? = mutableSetOf()
+    var photoURL_stringsetJ: MutableSet<String?>? = mutableSetOf()
+    var name_C: String? = null
+    var email_C: String? = null
+    var id_C: String? = null
+    var photoURL_C: String? = null
+    var name_J: String? = null
+    var email_J: String? = null
+    var id_J: String? = null
+    var photoURL_J: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -201,89 +209,141 @@ class OnlinePlay : AppCompatActivity() {
         button7.alpha = 1f
         button8.alpha = 1f
         button9.alpha = 1f
+
         if(isMymove)
         {
             if (account!= null) {
                 var sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
-                id_stringset = sharedPreferences.getStringSet("ID", null)
-                name_stringset = sharedPreferences.getStringSet("NAME", null)
-                email_stringset = sharedPreferences.getStringSet("EMAIL", null)
-                Log.d("*****", "ID set = $id_stringset")
-                Log.d("*****", "namee set = $name_stringset")
-                Log.d("*****", "email set = $email_stringset")
+                id_stringsetC = sharedPreferences.getStringSet("ID", null)
+                name_stringsetC = sharedPreferences.getStringSet("NAME", null)
+                email_stringsetC = sharedPreferences.getStringSet("EMAIL", null)
+                photoURL_stringsetC = sharedPreferences.getStringSet("PHOTO_URL", null)
+                Log.d("INCREATOR", "ID set = $id_stringsetC")
+                Log.d("INCREATOR", "namee set = $name_stringsetC")
+                Log.d("INCREATOR", "email set = $email_stringsetC")
+                Log.d("INCREATOR", "photo_URL set = $photoURL_stringsetC")
 
+                Log.d("abcdefg", "In OnlinePlay Value of joinerID = $joinerID, value of joinerName = $joinerName")
+                if(id_stringsetC == null){
+                    id_stringsetC = mutableSetOf()
+                    id_stringsetC?.add(joinerID)
+                }
+                else{
+                    id_stringsetC?.add(joinerID)
+                }
 
+                if(name_stringsetC == null){
+                    name_stringsetC = mutableSetOf()
+                    name_stringsetC?.add(joinerName)
+                }
+                else{
+                    name_stringsetC?.add(joinerName)
+                }
 
-                FirebaseDatabase.getInstance().reference.child("Details")
-                    .child(code!!).child("Joining").child("name").addValueEventListener(object :ValueEventListener
-                    {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            name_ = snapshot.value.toString()
-                        }
+                if(email_stringsetC == null){
+                    email_stringsetC = mutableSetOf()
+                    email_stringsetC?.add(joinerEmail)
+                }
+                else{
+                    email_stringsetC?.add(joinerEmail)
+                }
 
-                        override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
-                        }
+                if(photoURL_stringsetC == null){
+                    photoURL_stringsetC = mutableSetOf()
+                    photoURL_stringsetC?.add(joinerPhotoURL)
+                }
+                else{
+                    photoURL_stringsetC?.add(joinerPhotoURL)
+                }
 
-                    })
-
-                FirebaseDatabase.getInstance().reference.child("Details")
-                    .child(code!!).child("Joining").child("email").addValueEventListener(object : ValueEventListener{
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            email = snapshot.value.toString()
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
-                        }
-
-                    })
-
-                FirebaseDatabase.getInstance().reference.child("Details")
-                    .child(code!!).child("Joining").child("id").addValueEventListener(object : ValueEventListener{
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            id = snapshot.value.toString()
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
-                        }
-
-                    })
-                id_stringset!!.add(id)
-                name_stringset!!.add(name_)
-                email_stringset!!.add(email)
-                Log.d("*****", "Updated ID set = $id_stringset")
-                Log.d("*****", "Updated name set = $name_stringset")
-                Log.d("*****", "Updated email set = $email_stringset")
+                Log.d("INCREATOR", "Updated ID set = ${id_stringsetC}")
+                Log.d("INCREATOR", "Updated name set = ${name_stringsetC}")
+                Log.d("INCREATOR", "Updated email set = ${email_stringsetC}")
+                Log.d("INCREATOR", "Updated photoURL set = ${photoURL_stringsetC}")
 
                 sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
                 editor = sharedPreferences.edit()
-                editor.apply{
-                    putStringSet("ID", id_stringset)
-                    putStringSet("NAME", name_stringset)
-                    putStringSet("EMAIL", email_stringset)
-
+                editor.apply {
+                    putStringSet("ID", id_stringsetC)
+                    putStringSet("NAME", name_stringsetC)
+                    putStringSet("EMAIL", email_stringsetC)
+                    putStringSet("PHOTO_URL", photoURL_stringsetC)
+                    Log.d("TAG", "Apply Done")
                 }
+
+
             }
 
-            Toast.makeText(this, "You are the Creator. U r playing with $name with email: $email", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "You are the Creator. U r playing with $name_J with email: $email_J", Toast.LENGTH_LONG).show()
             turn.text = "Your Turn"
             instruction.text = "Your Shape : X"
-            codeText.text = "CODE : $code!!"
+            codeText.text = "CODE : $code"
 
         }
-        else
-        {
-            val email = FirebaseDatabase.getInstance().reference.child("Details")
-                .child(code!!).child("Creator").child("email").get()
-            val name = FirebaseDatabase.getInstance().reference.child("Details")
-                .child(code!!).child("Creator").child("name").get()
-            Toast.makeText(this, "You are the Joiner. U r playing with $name with email: $email", Toast.LENGTH_LONG).show()
-            turn.text = "Opponent's Turn"
-            instruction.text = "Your Shape : O"
-            codeText.visibility = View.GONE
+        else {
 
+            if (account != null) {
+                var sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
+                id_stringsetJ = sharedPreferences.getStringSet("ID", null)
+                name_stringsetJ = sharedPreferences.getStringSet("NAME", null)
+                email_stringsetJ = sharedPreferences.getStringSet("EMAIL", null)
+                photoURL_stringsetJ = sharedPreferences.getStringSet("PHOTO_URL", null)
+                Log.d("INJOINER", "ID set = ${id_stringsetJ}")
+                Log.d("INJOINER", "namee set = ${name_stringsetJ}")
+                Log.d("INJOINER", "email set = ${email_stringsetJ}")
+                Log.d("INJOINER", "photo_URL set = ${photoURL_stringsetJ}")
+
+                if(id_stringsetJ == null){
+                    id_stringsetJ = mutableSetOf()
+                    id_stringsetJ?.add(creatorID)
+                }
+                else{
+                    id_stringsetJ?.add(creatorID)
+                }
+
+                if(name_stringsetJ == null){
+                    name_stringsetJ = mutableSetOf()
+                    name_stringsetJ?.add(creatorName)
+                }
+                else{
+                    id_stringsetJ?.add(creatorName)
+                }
+
+                if(email_stringsetJ == null){
+                    email_stringsetJ = mutableSetOf()
+                    email_stringsetJ?.add(creatorEmail)
+                }
+                else{
+                    email_stringsetJ?.add(creatorEmail)
+                }
+
+                if(photoURL_stringsetJ == null){
+                    photoURL_stringsetJ = mutableSetOf()
+                    photoURL_stringsetJ?.add(creatorPhotoURL)
+                }
+                else{
+                    photoURL_stringsetJ?.add(creatorPhotoURL)
+                }
+
+                Log.d("INJOINER", "Updated ID set = $id_stringsetJ")
+                Log.d("INJOINER", "Updated name set = $name_stringsetJ")
+                Log.d("INJOINER", "Updated email set = $email_stringsetJ")
+                Log.d("INJOINER", "Updated photoURL set = $photoURL_stringsetJ")
+
+                sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
+                editor = sharedPreferences.edit()
+                editor.apply {
+                    putStringSet("ID", id_stringsetJ)
+                    putStringSet("NAME", name_stringsetJ)
+                    putStringSet("EMAIL", email_stringsetJ)
+                    putStringSet("PHOTO_URL", photoURL_stringsetJ)
+                    Log.d("TAG", "Apply Done")
+                }
+                turn.text = "Opponent's Turn"
+                instruction.text = "Your Shape : O"
+                codeText.visibility = View.GONE
+
+            }
         }
 
         name.alpha = 0f
@@ -999,6 +1059,31 @@ class OnlinePlay : AppCompatActivity() {
         button9.setOnClickListener(b9)
     }
 
+    private fun attachValuesCreator(l: ArrayList<String>) {
+        name_C = l[1]
+        email_C = l[2]
+        id_C = l[0]
+        photoURL_C = l[3]
+    }
+
+    private fun attachValuesJoiner(l: ArrayList<String>) {
+        name_J = l[1]
+        email_J = l[2]
+        id_J = l[0]
+        photoURL_J = l[3]
+    }
+
+    private fun getDetails(snapshot: DataSnapshot): ArrayList<String> {
+        val dt = snapshot.children
+        val l = ArrayList<String>()
+        dt.forEach {
+            val value = it.value.toString()
+            l.add(value)
+
+        }
+        return l
+    }
+
     private fun imageFinder(img: Drawable): Int {
         return when (img) {
             drawableOb -> 1
@@ -1443,8 +1528,7 @@ class OnlinePlay : AppCompatActivity() {
         super.onStop()
     }
 
-    private fun scoreText(sp: Array<Int>)
-    {
+    private fun scoreText(sp: Array<Int>) {
         if(isCodemaker)
         {
             scoreText.text = "Mine : ${sp[0]}  |  Opponent's : ${sp[1]} "

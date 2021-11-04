@@ -7,20 +7,91 @@
     tools:context=".OnlineConnection"
     android:background="@drawable/background">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/invitationFragmentContainer"
-        android:layout_width="269dp"
-        android:layout_height="379dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!--    <LinearLayout-->
+<!--        android:id="@+id/linearLayoutContainer"-->
+<!--        android:layout_width="267dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
+
+
+<!--        <LinearLayout-->
+
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:padding="5sp">-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:fontFamily="@font/aclonica"-->
+<!--                android:foregroundGravity="center_horizontal"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                android:text="LOBBY"-->
+<!--                android:textColor="#000000"-->
+<!--                android:textSize="18sp" />-->
+
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent">-->
+
+<!--                <androidx.recyclerview.widget.RecyclerView-->
+<!--                    android:id="@+id/rv1_lobby"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="150dp" />-->
+
+<!--            </androidx.cardview.widget.CardView>-->
+
+
+<!--        </LinearLayout>-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:padding="5sp">-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:fontFamily="@font/aclonica"-->
+<!--                android:foregroundGravity="center_horizontal"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                android:text="@string/invite_players"-->
+<!--                android:textSize="18sp" />-->
+
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent">-->
+
+<!--                <androidx.recyclerview.widget.RecyclerView-->
+<!--                    android:id="@+id/rv2_invites"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="150dp">-->
+
+<!--                </androidx.recyclerview.widget.RecyclerView>-->
+
+<!--            </androidx.cardview.widget.CardView>-->
+<!--        </LinearLayout>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/playButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="PLAY"-->
+<!--            android:layout_gravity="right"/>-->
+
+<!--    </LinearLayout>-->
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="279dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/backgroung_xml"
         android:gravity="center"
         android:padding="5dp"
@@ -28,94 +99,98 @@
         android:textColor="#992128"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.545"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinatorLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <Button
-        android:id="@+id/b_create"
-        android:layout_width="112dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/button_shape"
-        android:fontFamily="@font/allerta"
-        android:padding="5dp"
-        android:text="create"
-        app:backgroundTint="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/coordinatorLayout" />
-
-    <Button
-        android:id="@+id/b_join"
-        android:layout_width="112dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/button_shape"
-        android:padding="5dp"
-        android:text="Join"
-        android:fontFamily="@font/allerta"
-        app:backgroundTint="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/b_create" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/b_join" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="300dp"
-        android:orientation="horizontal"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/invitationContainer"
+        android:layout_width="414dp"
+        android:layout_height="479dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <EditText
-            android:id="@+id/et"
-            android:layout_width="273dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Enter Code"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/info"
-            android:clickable="true"
-            android:focusable="true"/>
-
-    </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="205dp"
-        android:layout_height="99dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.666"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.666" />
+
+    <!--    <androidx.coordinatorlayout.widget.CoordinatorLayout-->
+<!--        android:id="@+id/coordinatorLayout"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="4dp"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/linearLayout2"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/linearLayout2"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">-->
+
+<!--    </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
+
+<!--    <Button-->
+<!--        android:id="@+id/b_create"-->
+<!--        android:layout_width="112dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:background="@drawable/button_shape"-->
+<!--        android:fontFamily="@font/allerta"-->
+<!--        android:padding="5dp"-->
+<!--        android:text="create"-->
+<!--        app:backgroundTint="@null"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/coordinatorLayout" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/b_join"-->
+<!--        android:layout_width="112dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:background="@drawable/button_shape"-->
+<!--        android:padding="5dp"-->
+<!--        android:text="Join"-->
+<!--        android:fontFamily="@font/allerta"-->
+<!--        app:backgroundTint="@null"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/b_create" />-->
+
+<!--    <ProgressBar-->
+<!--        android:id="@+id/progressBar"-->
+<!--        style="?android:attr/progressBarStyle"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:visibility="gone"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/b_join" />-->
+
+<!--    <LinearLayout-->
+<!--        android:id="@+id/linearLayout2"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="300dp"-->
+<!--        android:orientation="horizontal"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent">-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/et"-->
+<!--            android:layout_width="273dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:hint="Enter Code"-->
+<!--            android:textColor="#FFFFFF"-->
+<!--            android:textColorHint="#FFFFFF" />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/imageView"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:srcCompat="@drawable/info"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"/>-->
+
+<!--    </LinearLayout>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
