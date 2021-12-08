@@ -4,6 +4,8 @@
         android:id="@+id/item1"
         android:icon="@drawable/logout"
         android:title="@string/signOut"/>
-
-
+    <item
+        android:id="@+id/invite_new_player"
+        android:icon="@drawable/invite_new_player"
+        android:title="Invite"/>
 </menu>

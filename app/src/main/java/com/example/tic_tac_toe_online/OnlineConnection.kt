@@ -2,8 +2,9 @@ package com.example.tic_tac_toe_online
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
+import android.database.Cursor
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -11,8 +12,8 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.RecyclerView
 
 
-
 var cc: Context? = null
+var joiningCode: String? = null
 class OnlineConnection : AppCompatActivity() {
     private lateinit var introText: TextView
     private lateinit var codeText: EditText
@@ -39,6 +40,17 @@ class OnlineConnection : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_online_connection)
+        Log.d("TATA", "My Token -=-= $myToken")
+
+        // New code when user clicks Notification and code is passed in intent
+        val c = intent.extras
+        if (c != null){
+            joiningCode = c.get("code") as String?
+        }
+        else{
+            joiningCode = null
+        }
+
 
 //        introText = findViewById(R.id.textView)
 //        codeText = findViewById(R.id.et)
@@ -77,8 +89,8 @@ class OnlineConnection : AppCompatActivity() {
         fragmentTransaction.commit()
 
         obj.setTurnOnFragment(object : OnlineConnectionFragment.TurnOnFragment{
-            override fun turnOn(sharedPreferences: SharedPreferences?) {
-                val obj2 = InvitationFragment(sharedPreferences)
+            override fun turnOn(cursor: Cursor?) {
+                val obj2 = InvitationFragment(cursor)
 
 //                supportFragmentManager.commit {
 //                    setReorderingAllowed(true)

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.tic_tac_toe_online">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name="androidx.multidex.MultiDexApplication"
@@ -11,13 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Tic_Tac_Toe_ONLINE">
-        <activity
-            android:name=".Test_activity"
-            android:exported="true" />
-        <activity android:name=".OnlinePlay" />
-        <activity android:name=".OnlineConnection" />
+        <activity android:name=".OnlinePlay" /> <!-- <activity android:name=".OnlineConnection"/> -->
         <activity android:name=".OfflinePlay" />
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,10 +24,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".OnlineConnection"
+            android:exported="false">
+            <intent-filter>
+                <action android:name=".OnlineConnection" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false"
+            android:permission="TODO"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -26,7 +26,9 @@ class InvitationFragment_Lobby_RecyclerView_Adapter : RecyclerView.Adapter<Recyc
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return RV1_LobbyViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.rv1_items, parent, false), mListener, items)
+            LayoutInflater.from(parent.context).inflate(R.layout.rv1_items, parent, false),
+            mListener
+        )
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -49,8 +51,7 @@ class InvitationFragment_Lobby_RecyclerView_Adapter : RecyclerView.Adapter<Recyc
 
     class RV1_LobbyViewHolder(
         itemView: View,
-        private val listener: OnItemClickListener,
-        items: ArrayList<InvitationFragment_Lobby>
+        private val listener: OnItemClickListener
     ): RecyclerView.ViewHolder(itemView){
         val profilePic = itemView.findViewById<ImageView>(R.id.lobby_player_profile)
         val displayName = itemView.findViewById<TextView>(R.id.lobby_displayName)

@@ -1,6 +1,5 @@
 package com.example.tic_tac_toe_online
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.Drawable
@@ -213,64 +212,18 @@ class OnlinePlay : AppCompatActivity() {
         if(isMymove)
         {
             if (account!= null) {
-                var sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
-                id_stringsetC = sharedPreferences.getStringSet("ID", null)
-                name_stringsetC = sharedPreferences.getStringSet("NAME", null)
-                email_stringsetC = sharedPreferences.getStringSet("EMAIL", null)
-                photoURL_stringsetC = sharedPreferences.getStringSet("PHOTO_URL", null)
-                Log.d("INCREATOR", "ID set = $id_stringsetC")
-                Log.d("INCREATOR", "namee set = $name_stringsetC")
-                Log.d("INCREATOR", "email set = $email_stringsetC")
-                Log.d("INCREATOR", "photo_URL set = $photoURL_stringsetC")
-
-                Log.d("abcdefg", "In OnlinePlay Value of joinerID = $joinerID, value of joinerName = $joinerName")
-                if(id_stringsetC == null){
-                    id_stringsetC = mutableSetOf()
-                    id_stringsetC?.add(joinerID)
-                }
-                else{
-                    id_stringsetC?.add(joinerID)
-                }
-
-                if(name_stringsetC == null){
-                    name_stringsetC = mutableSetOf()
-                    name_stringsetC?.add(joinerName)
-                }
-                else{
-                    name_stringsetC?.add(joinerName)
-                }
-
-                if(email_stringsetC == null){
-                    email_stringsetC = mutableSetOf()
-                    email_stringsetC?.add(joinerEmail)
-                }
-                else{
-                    email_stringsetC?.add(joinerEmail)
-                }
-
-                if(photoURL_stringsetC == null){
-                    photoURL_stringsetC = mutableSetOf()
-                    photoURL_stringsetC?.add(joinerPhotoURL)
-                }
-                else{
-                    photoURL_stringsetC?.add(joinerPhotoURL)
-                }
-
-                Log.d("INCREATOR", "Updated ID set = ${id_stringsetC}")
-                Log.d("INCREATOR", "Updated name set = ${name_stringsetC}")
-                Log.d("INCREATOR", "Updated email set = ${email_stringsetC}")
-                Log.d("INCREATOR", "Updated photoURL set = ${photoURL_stringsetC}")
-
-                sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
-                editor = sharedPreferences.edit()
-                editor.apply {
-                    putStringSet("ID", id_stringsetC)
-                    putStringSet("NAME", name_stringsetC)
-                    putStringSet("EMAIL", email_stringsetC)
-                    putStringSet("PHOTO_URL", photoURL_stringsetC)
-                    Log.d("TAG", "Apply Done")
-                }
-
+//                var sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_WORLD_READABLE)
+//                Log.d("DATASOURCE_INVITES", "Shared Preferances Value in Online PLay = $sharedPreferences")
+//                id_stringsetC = sharedPreferences.getStringSet("ID", null)
+//                name_stringsetC = sharedPreferences.getStringSet("NAME", null)
+//                email_stringsetC = sharedPreferences.getStringSet("EMAIL", null)
+//                photoURL_stringsetC = sharedPreferences.getStringSet("PHOTO_URL", null)
+//                Log.d("INCREATOR", "ID set = $id_stringsetC")
+//                Log.d("INCREATOR", "namee set = $name_stringsetC")
+//                Log.d("INCREATOR", "email set = $email_stringsetC")
+//                Log.d("INCREATOR", "photo_URL set = $photoURL_stringsetC")
+                val myBD = MyDatabaseHelper(this)
+                myBD.addRecord(joinerID, joinerName, joinerEmail, joinerPhotoURL, joinerToken)
 
             }
 
@@ -283,62 +236,9 @@ class OnlinePlay : AppCompatActivity() {
         else {
 
             if (account != null) {
-                var sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
-                id_stringsetJ = sharedPreferences.getStringSet("ID", null)
-                name_stringsetJ = sharedPreferences.getStringSet("NAME", null)
-                email_stringsetJ = sharedPreferences.getStringSet("EMAIL", null)
-                photoURL_stringsetJ = sharedPreferences.getStringSet("PHOTO_URL", null)
-                Log.d("INJOINER", "ID set = ${id_stringsetJ}")
-                Log.d("INJOINER", "namee set = ${name_stringsetJ}")
-                Log.d("INJOINER", "email set = ${email_stringsetJ}")
-                Log.d("INJOINER", "photo_URL set = ${photoURL_stringsetJ}")
+                val myBD = MyDatabaseHelper(this)
+                myBD.addRecord(creatorID, creatorName, creatorEmail, creatorPhotoURL, creatorToken)
 
-                if(id_stringsetJ == null){
-                    id_stringsetJ = mutableSetOf()
-                    id_stringsetJ?.add(creatorID)
-                }
-                else{
-                    id_stringsetJ?.add(creatorID)
-                }
-
-                if(name_stringsetJ == null){
-                    name_stringsetJ = mutableSetOf()
-                    name_stringsetJ?.add(creatorName)
-                }
-                else{
-                    id_stringsetJ?.add(creatorName)
-                }
-
-                if(email_stringsetJ == null){
-                    email_stringsetJ = mutableSetOf()
-                    email_stringsetJ?.add(creatorEmail)
-                }
-                else{
-                    email_stringsetJ?.add(creatorEmail)
-                }
-
-                if(photoURL_stringsetJ == null){
-                    photoURL_stringsetJ = mutableSetOf()
-                    photoURL_stringsetJ?.add(creatorPhotoURL)
-                }
-                else{
-                    photoURL_stringsetJ?.add(creatorPhotoURL)
-                }
-
-                Log.d("INJOINER", "Updated ID set = $id_stringsetJ")
-                Log.d("INJOINER", "Updated name set = $name_stringsetJ")
-                Log.d("INJOINER", "Updated email set = $email_stringsetJ")
-                Log.d("INJOINER", "Updated photoURL set = $photoURL_stringsetJ")
-
-                sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
-                editor = sharedPreferences.edit()
-                editor.apply {
-                    putStringSet("ID", id_stringsetJ)
-                    putStringSet("NAME", name_stringsetJ)
-                    putStringSet("EMAIL", email_stringsetJ)
-                    putStringSet("PHOTO_URL", photoURL_stringsetJ)
-                    Log.d("TAG", "Apply Done")
-                }
                 turn.text = "Opponent's Turn"
                 instruction.text = "Your Shape : O"
                 codeText.visibility = View.GONE

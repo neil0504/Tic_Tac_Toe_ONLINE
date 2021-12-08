@@ -2,7 +2,7 @@ package com.example.tic_tac_toe_online
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
+import android.database.Cursor
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -29,6 +29,7 @@ lateinit var creatorID: String
 lateinit var creatorName: String
 lateinit var creatorEmail: String
 lateinit var creatorPhotoURL: String
+lateinit var creatorToken: String
 class OnlineConnectionFragment : Fragment(){
 //    private lateinit var introText: TextView
     private lateinit var codeText: EditText
@@ -40,7 +41,7 @@ class OnlineConnectionFragment : Fragment(){
     private lateinit var thiscontxt: Context
     lateinit var mListener: TurnOnFragment
     public interface TurnOnFragment{
-        fun turnOn(sharedPreferences: SharedPreferences?)
+        fun turnOn(cursor: Cursor?)
     }
     fun setTurnOnFragment(listerer: TurnOnFragment) {
         mListener = listerer
@@ -73,6 +74,9 @@ class OnlineConnectionFragment : Fragment(){
         info = view.findViewById(R.id.imageView)
         cordLayout = view.findViewById(R.id.coordinatorLayout)
 
+        // New code when user clicks Notification and code is passed in intent
+
+
         info.setOnTouchListener { v, event ->
             when (event?.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -86,6 +90,10 @@ class OnlineConnectionFragment : Fragment(){
             }
 
             v?.onTouchEvent(event) ?: true
+        }
+        if(joiningCode != null)
+        {
+            codeText.setText(joiningCode)
         }
         bCreate.setOnClickListener {
             code = null
@@ -105,6 +113,7 @@ class OnlineConnectionFragment : Fragment(){
                 isCodemaker = true
                 FirebaseDatabase.getInstance().reference.child("codes").addValueEventListener(object:
                     ValueEventListener {
+                    @SuppressLint("WrongConstant")
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val check = isValueAvailable(snapshot, code!!)
                         Handler().postDelayed({
@@ -122,21 +131,27 @@ class OnlineConnectionFragment : Fragment(){
                                 FirebaseDatabase.getInstance().reference.child("codes").push().setValue(code)
                                 FirebaseDatabase.getInstance().reference.child("Creater_Joiner").child(
                                     code!!).child("CreaterID").setValue(account!!.id)
-                                var sharedPreferences: SharedPreferences? = null
+//                                var sharedPreferences: SharedPreferences? = null
+                                checkTemp = false
+
                                 if (account != null)
                                 {
-                                    sharedPreferences = thiscontxt.getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
-                                    val id_stringset = sharedPreferences.getStringSet("ID", null)
-                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF id_stringset = $id_stringset")
-                                    val name_stringset = sharedPreferences.getStringSet("NAME", null)
-                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF name_stringset = $name_stringset")
-                                    val email_stringset = sharedPreferences.getStringSet("EMAIL", null)
-                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF email_stringset = $email_stringset")
-                                    val photoURL_stringset = sharedPreferences.getStringSet("PHOTO_URL", null)
-                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF photoURL_stringset = $photoURL_stringset")
+//                                    sharedPreferences = thiscontxt.getSharedPreferences(account!!.id, Context.MODE_APPEND)
+//                                    Log.d("DATASOURCE_INVITES", "Shared Preferances Value = $sharedPreferences")
+//                                    val id_stringset = sharedPreferences.getStringSet("ID", mutableSetOf())
+//                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF id_stringset = $id_stringset")
+//                                    val name_stringset = sharedPreferences.getStringSet("NAME", mutableSetOf())
+//                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF name_stringset = $name_stringset")
+//                                    val email_stringset = sharedPreferences.getStringSet("EMAIL", mutableSetOf())
+//                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF email_stringset = $email_stringset")
+//                                    val photoURL_stringset = sharedPreferences.getStringSet("PHOTO_URL", mutableSetOf())
+//                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF photoURL_stringset = $photoURL_stringset")
 //                                    sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
 //                                    name = account!!.displayName
 //                                    email = account!!.email
+                                    val myBD = MyDatabaseHelper(thiscontxt)
+                                    val cursor: Cursor? = myBD.readAllData()
+
                                     FirebaseDatabase.getInstance().reference.child("Details")
                                         .child(code!!).child("Creator").child("name").setValue(account!!.displayName)
                                     FirebaseDatabase.getInstance().reference.child("Details")
@@ -148,11 +163,11 @@ class OnlineConnectionFragment : Fragment(){
                                     FirebaseDatabase.getInstance().reference.child("Details")
                                         .child(code!!).child("Creator").child("photo")
                                         .setValue(account!!.photoUrl!!.toString())
+
+                                    mListener.turnOn(cursor)
                                 }
-                                checkTemp = false
-                                if(account!= null) {
-                                    mListener.turnOn(sharedPreferences)
-                                }
+
+
 
                             }
                         }, 2000)
@@ -210,6 +225,7 @@ class OnlineConnectionFragment : Fragment(){
                                 FirebaseDatabase.getInstance().reference.child("Details")
                                     .child(code!!).child("Joining").child("photoURL")
                                     .setValue(account!!.photoUrl!!.toString())
+
                             }
                             Handler().postDelayed({
                                 if (data) {
@@ -219,6 +235,7 @@ class OnlineConnectionFragment : Fragment(){
                                     arrayList.add(account!!.displayName)
                                     arrayList.add(account!!.email)
                                     arrayList.add(account!!.photoUrl.toString())
+                                    arrayList.add(myToken.toString())
                                     FirebaseDatabase.getInstance().reference.child("Joiners").child(
                                         code!!).child(account!!.id).setValue(arrayList)
 //                                    FirebaseDatabase.getInstance().reference.child("Joiners")
@@ -254,6 +271,7 @@ class OnlineConnectionFragment : Fragment(){
                                             creatorName = l[1]
                                             creatorEmail = l[2]
                                             creatorPhotoURL = l[3]
+                                            creatorToken = l[4]
                                         }
 
                                         override fun onChildChanged(

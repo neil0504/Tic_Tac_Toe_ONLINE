@@ -1,7 +1,10 @@
 package com.example.tic_tac_toe_online
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -24,9 +27,20 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.messaging.FirebaseMessaging
 import com.squareup.picasso.Picasso
+import kotlin.properties.Delegates
+
+interface FragmentStateCheck{
+    fun state(state: Boolean)
+}
 
 var account: GoogleSignInAccount? = null
+var myToken: String? = null
+@SuppressLint("StaticFieldLeak")
+lateinit var notificationCounterText: TextView
+@SuppressLint("StaticFieldLeak")
+lateinit var MainActivityContext: Context
 class MainActivity : AppCompatActivity(){
     lateinit var toggle: ActionBarDrawerToggle
     val TAG = "*********"
@@ -40,8 +54,9 @@ class MainActivity : AppCompatActivity(){
     private lateinit var name: TextView
     private var signedIn = false
     private lateinit var binding: ActivityMainBinding
+    var isFragmentOpen by Delegates.notNull<Boolean>()
 
-
+    private lateinit var fragmentInterface: FragmentStateCheck
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,27 +64,64 @@ class MainActivity : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val obj = NotificationFragment()
+        MainActivityContext = this
+
+        isFragmentOpen = false
+
+
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,  R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-
+//        obj.setUpdateUIInterfaceListener(object : NotificationFragment.UpdateUIInterface{
+//            override fun updateUI(position: Int) {
+//                runOnUiThread {
+//                    invitesAdapter.notifyItemRemoved(position)
+//                }
+//            }
+//        })
         val bell = toolbar.findViewById<ImageView>(R.id.notif_icon)
-        val obj2 = NotificationCounter(toolbar.findViewById(R.id.bell))
+        val view = toolbar.findViewById<View>(R.id.bell)
+        notificationCounterText= view.findViewById(R.id.counter)
+
+        val obj = NotificationFragment(notificationCounterText)
+        MyDatabaseHelper_Invites.setUpdateUIInterfaceListener(object : MyDatabaseHelper_Invites.UpdateUIInterface{
+            override fun updateUI(position: Int) {
+//                handler.post {
+//                    invitesAdapter.notifyItemInserted(position)
+//            }
+                if (isFragmentOpen){
+                    obj.state(true)
+                }else{
+                    Handler(mainLooper).post {
+                        val num = NotificationCounter.increaseNumber()
+                        notificationCounterText.text = num
+                    }
+
+                }
+
+            }
+
+        })
+
+//        val obj2 = NotificationCounter(toolbar.findViewById(R.id.bell))
+
+
         bell.setOnClickListener{
-            obj2.increaseNumber()
+            isFragmentOpen = true
+            val num = NotificationCounter.increaseNumber()
+            notificationCounterText.text = num
             Toast.makeText(this, "Bell Clicked", Toast.LENGTH_SHORT).show()
             val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.addToBackStack(null)
             fragmentTransaction.replace(R.id.notif_fragment_container, obj)
             fragmentTransaction.commit()
         }
         navigationView = findViewById(R.id.navigationView)
-
+        // Code to handle selection in 
         navigationView.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.item1 -> {
@@ -93,6 +145,16 @@ class MainActivity : AppCompatActivity(){
                     else{
                         Toast.makeText(this, "No account found to Signout", Toast.LENGTH_SHORT).show()
                     }
+                }
+                R.id.invite_new_player ->{
+                    Toast.makeText(this, "Sign Out clicked", Toast.LENGTH_SHORT).show()
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    startActivity(shareIntent)
                 }
 
 
@@ -135,22 +197,6 @@ class MainActivity : AppCompatActivity(){
 
 
     }
-
-//    private fun signOut() {
-//        mGoogleSignInClient.signOut()
-//            .addOnCompleteListener {
-//                if (it.isSuccessful)
-//                {
-//                    Toast.makeText(this, "Sign Out successfull", Toast.LENGTH_SHORT).show()
-//                    img.setImageResource(R.drawable.guest)
-//                    name.text = R.string.guest.toString()
-//                }
-//                else
-//                {
-//                    Toast.makeText(this, "Sign Out successfull", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item))
@@ -200,6 +246,16 @@ class MainActivity : AppCompatActivity(){
             Picasso.get().load(acc.photoUrl).placeholder(R.mipmap.ic_launcher).into(img)
             name.text = ""
             name.text = acc.givenName
+
+            FirebaseMessaging.getInstance().isAutoInitEnabled = true
+
+            FirebaseMessaging.getInstance().token.addOnSuccessListener { result ->
+                if(result != null){
+                    myToken = result
+                    Log.d("TAGGGGG", "Got the Token Creater= $myToken")
+                    // DO your thing with your firebase token
+                }
+            }
             Toast.makeText(this, "SignIn Successful", Toast.LENGTH_SHORT).show()
         }
 
@@ -213,4 +269,14 @@ class MainActivity : AppCompatActivity(){
             Log.d(TAG, "account is not null")
         }
     }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack();
+            isFragmentOpen = false
+        } else {
+            super.onBackPressed();
+        }
+    }
+
 }
