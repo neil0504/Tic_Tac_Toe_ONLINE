@@ -23,7 +23,7 @@ class DataSource_Invites_List {
                             inviteeEmail = getString(3)
                             inviteePhotoURL = getString(4)
                             inviteeToken = getString(5)
-                            inviteeCode = getString(6)
+                             inviteeCode = getString(6)
                         }
                         list.add(
                             Invites(

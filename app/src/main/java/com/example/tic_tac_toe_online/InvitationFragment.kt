@@ -20,15 +20,16 @@ lateinit var data_Lobby: ArrayList<InvitationFragment_Lobby>
 
 lateinit var joinerID: String
 lateinit var joinerName: String
-lateinit var joinerEmail: String
-lateinit var joinerPhotoURL: String
+var joinerEmail: String? = null
+var joinerPhotoURL: String? = null
 lateinit var joinerToken: String
 
 //class InvitationFragment(sp: SharedPreferences?): Fragment(R.layout.fragment_invitation){
 class InvitationFragment(cursor: Cursor?): Fragment(R.layout.fragment_invitation){
+
     private var cur: Cursor? = null
-    private lateinit var recycler_view2: RecyclerView
-    private lateinit var recycler_view1: RecyclerView
+    private lateinit var recyclerView2: RecyclerView
+    private lateinit var recyclerView1: RecyclerView
 
     private lateinit var thiscontxt: Context
     private lateinit var playBtn: Button
@@ -37,25 +38,22 @@ class InvitationFragment(cursor: Cursor?): Fragment(R.layout.fragment_invitation
     private var idd: String? = null
     private var name: String? = null
     private var email: String? = null
-    private var photo_URL: String? = null
+    private var photoURL: String? = null
     private var token: String? = null
-    private var user_id: String? = null
-    private lateinit var data_invites: ArrayList<InvitationFragment_Invites>
+    private lateinit var dataInvites: ArrayList<InvitationFragment_Invites>
 
 //    lateinit var acceptedMethod: AcceptedMethod
 //    lateinit var obj: OnlineConnectionFragment
     init {
         cur = cursor
-//        Toast.makeText(cc, "Fragment init method", Toast.LENGTH_SHORT).show()
-//        acceptedMethod.accepted()
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         playBtn = view.findViewById(R.id.playButton)
-        recycler_view2 = view.findViewById(R.id.rv2_invites)
-        recycler_view1 = view.findViewById(R.id.rv1_lobby)
+        recyclerView2 = view.findViewById(R.id.rv2_invites)
+        recyclerView1 = view.findViewById(R.id.rv1_lobby)
         thiscontxt = view.context
         Toast.makeText(thiscontxt, "Fragment Created", Toast.LENGTH_SHORT).show()
         initRecyclerView1()
@@ -65,18 +63,30 @@ class InvitationFragment(cursor: Cursor?): Fragment(R.layout.fragment_invitation
 
         playBtn.setOnClickListener {
             if(itemSelected){
-                val set = ArrayList<String>()
-                set.add(account!!.id)
-                set.add(account!!.displayName!!)
-                set.add(account!!.email!!)
-                set.add(account!!.photoUrl!!.toString())
-                set.add(myToken!!)
+                val set = ArrayList<String?>()
+                if (signedInGoogle)
+                {
+                    if (account != null){
+                        set.add(account!!.id)
+                        set.add(account!!.displayName!!)
+                        set.add(account!!.email!!)
+                        set.add(account!!.photoUrl!!.toString())
+                        set.add(myToken!!)
+                    }
+                }else if (signedInGuest){
+                    set.add(guestId)
+                    set.add(guestName)
+                    set.add("null")
+                    set.add("null")
+                    set.add(myToken)
+                }
+
                 FirebaseDatabase.getInstance().reference.child("Creator_cred").child(code!!).child(idd!!).setValue(set)
                 FirebaseDatabase.getInstance().reference.child("Play with").child(code!!).child(idd!!).setValue(idd!!)
                 joinerID = idd!!
                 joinerName = name!!
-                joinerEmail = email!!
-                joinerPhotoURL = photo_URL!!.toString()
+                joinerEmail = email
+                joinerPhotoURL = photoURL.toString()
                 joinerToken = token!!
                 Log.d("ABCDEFGH", "Value of joinerID = $joinerID, Value of joinerName = $joinerName")
 //                obj.accepted()
@@ -88,7 +98,7 @@ class InvitationFragment(cursor: Cursor?): Fragment(R.layout.fragment_invitation
 
     }
     private fun initRecyclerView1() {
-        recycler_view1.apply {
+        recyclerView1.apply {
             layoutManager = LinearLayoutManager(thiscontxt)
             val topSpacingItemDecoration = TopSpacingItemDecoration(30)
             addItemDecoration(topSpacingItemDecoration)
@@ -105,7 +115,7 @@ class InvitationFragment(cursor: Cursor?): Fragment(R.layout.fragment_invitation
                     idd = obj.id
                     name = obj.name
                     email = obj.email
-                    photo_URL = obj.photo_URL
+                    photoURL = obj.photo_URL
                     token = obj.token
 
                 }
@@ -115,7 +125,7 @@ class InvitationFragment(cursor: Cursor?): Fragment(R.layout.fragment_invitation
         }
     }
     private fun initRecyclerView2(){
-        recycler_view2.apply {
+        recyclerView2.apply {
             layoutManager = LinearLayoutManager(thiscontxt)
             val topSpacingItemDecoration = TopSpacingItemDecoration(30)
             addItemDecoration(topSpacingItemDecoration)
@@ -123,21 +133,22 @@ class InvitationFragment(cursor: Cursor?): Fragment(R.layout.fragment_invitation
             adapter = invitationFragment_InvitesAdapter
             invitationFragment_InvitesAdapter.setOnDeleteClickListnerer(object : InvitationFragment_Invites_RecyclerViewAdapter.OnDeleteClickListnerer{
                 override fun onDeleteClick(position: Int) {
-                    val obj = data_invites[position]
-                    val ID = obj.id
+                    val obj = dataInvites[position]
+                    val playerID = obj.id
                     Log.d("DATA_RETRIVAL", "Delete Button Clicked")
                     val db = MyDatabaseHelper(thiscontxt)
-                    db.deleteRow(ID)
-                    data_invites.removeAt(position)
+                    db.deleteRow(playerID)
+                    dataInvites.removeAt(position)
                     invitationFragment_InvitesAdapter.notifyItemRemoved(position)
                 }
             })
             invitationFragment_InvitesAdapter.setOnInviteClickListnerer(object : InvitationFragment_Invites_RecyclerViewAdapter.OnInviteClickListnerer{
                 override fun onInviteClick(position: Int) {
                     Toast.makeText(thiscontxt, "Invite Button Clicked", Toast.LENGTH_SHORT).show()
-                    val obj = data_invites[position]
-                    val ID = obj.id
+
+                    val obj = dataInvites[position]
                     val token = obj.userToken
+
                     Log.d("TATA", "Invitee Token = $token")
                     // TODO: Do account not null check
                     val sendNotif = FcmNotificationsSender(token, "Invitation", "${account?.displayName} invites you to 2 Player Tic-Tac-Toe", thiscontxt, this@InvitationFragment.requireActivity())
@@ -148,15 +159,15 @@ class InvitationFragment(cursor: Cursor?): Fragment(R.layout.fragment_invitation
         }
     }
     private fun addDataset2(){
-        data_invites = DataSource_for_rv2_Invitation_Fragment.createDataSet(cur)
-        invitationFragment_InvitesAdapter.submitList(data_invites)
+        dataInvites = DataSource_RV2_InvitationFragment.createDataSet(cur)
+        invitationFragment_InvitesAdapter.submitList(dataInvites)
     }
     private fun addDataset1(){
-        data_Lobby = DataSource_for_rv1_Invitation_Fragment.createDataSet()
+        data_Lobby = DataSource_RV1_InvitationFragment.createDataSet()
         invitationfragment_LobbyRecyclerviewAdapter.submitList(data_Lobby)
     }
-    fun acc() {
-        startActivity(Intent(cc, OnlinePlay::class.java))
+    private fun acc() {
+        startActivity(Intent(thiscontxt, OnlinePlay::class.java))
     }
 
 

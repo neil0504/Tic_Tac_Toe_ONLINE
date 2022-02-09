@@ -27,11 +27,12 @@ var keyValue: String? = null
 
 lateinit var creatorID: String
 lateinit var creatorName: String
-lateinit var creatorEmail: String
-lateinit var creatorPhotoURL: String
+var creatorEmail: String? = null
+var creatorPhotoURL: String? = null
 lateinit var creatorToken: String
 class OnlineConnectionFragment : Fragment(){
 //    private lateinit var introText: TextView
+    private val TAG = "OnlineConnectionFragment"
     private lateinit var codeText: EditText
     private lateinit var bJoin: Button
     private lateinit var bCreate: Button
@@ -40,16 +41,11 @@ class OnlineConnectionFragment : Fragment(){
     private lateinit var cordLayout: CoordinatorLayout
     private lateinit var thiscontxt: Context
     lateinit var mListener: TurnOnFragment
-    public interface TurnOnFragment{
+    interface TurnOnFragment{
         fun turnOn(cursor: Cursor?)
     }
     fun setTurnOnFragment(listerer: TurnOnFragment) {
         mListener = listerer
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -65,8 +61,6 @@ class OnlineConnectionFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         thiscontxt = view.context
-//        FirebaseApp.initializeApp(thiscontxt)
-//        introText = findViewById(R.id.textView)
         codeText = view.findViewById(R.id.et)
         bJoin = view.findViewById(R.id.b_join)
         bCreate = view.findViewById(R.id.b_create)
@@ -91,10 +85,13 @@ class OnlineConnectionFragment : Fragment(){
 
             v?.onTouchEvent(event) ?: true
         }
-        if(joiningCode != null)
+        if(joiningCodeFromIntent != null)
         {
-            codeText.setText(joiningCode)
+            codeText.setText(joiningCodeFromIntent)
         }
+
+        codeText.requestFocus()
+
         bCreate.setOnClickListener {
             code = null
             codeFound = false
@@ -111,10 +108,12 @@ class OnlineConnectionFragment : Fragment(){
             if (code != null && code != "")
             {
                 isCodemaker = true
-                FirebaseDatabase.getInstance().reference.child("codes").addValueEventListener(object:
+                FirebaseDatabase.getInstance().reference.child("codes").addListenerForSingleValueEvent(object:
                     ValueEventListener {
-                    @SuppressLint("WrongConstant")
+
+                    @SuppressLint("WrongConstant", "LongLogTag")
                     override fun onDataChange(snapshot: DataSnapshot) {
+                        Log.d("05042", "addValueEventListener called")
                         val check = isValueAvailable(snapshot, code!!)
                         Handler().postDelayed({
                             if (check) {
@@ -129,45 +128,33 @@ class OnlineConnectionFragment : Fragment(){
                             }
                             else{
                                 FirebaseDatabase.getInstance().reference.child("codes").push().setValue(code)
-                                FirebaseDatabase.getInstance().reference.child("Creater_Joiner").child(
-                                    code!!).child("CreaterID").setValue(account!!.id)
-//                                var sharedPreferences: SharedPreferences? = null
+
                                 checkTemp = false
 
-                                if (account != null)
-                                {
-//                                    sharedPreferences = thiscontxt.getSharedPreferences(account!!.id, Context.MODE_APPEND)
-//                                    Log.d("DATASOURCE_INVITES", "Shared Preferances Value = $sharedPreferences")
-//                                    val id_stringset = sharedPreferences.getStringSet("ID", mutableSetOf())
-//                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF id_stringset = $id_stringset")
-//                                    val name_stringset = sharedPreferences.getStringSet("NAME", mutableSetOf())
-//                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF name_stringset = $name_stringset")
-//                                    val email_stringset = sharedPreferences.getStringSet("EMAIL", mutableSetOf())
-//                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF email_stringset = $email_stringset")
-//                                    val photoURL_stringset = sharedPreferences.getStringSet("PHOTO_URL", mutableSetOf())
-//                                    Log.d("DATASOURCE_INVITES", "EXISTING VALUE OF photoURL_stringset = $photoURL_stringset")
-//                                    sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_PRIVATE)
-//                                    name = account!!.displayName
-//                                    email = account!!.email
+
+                                if(signedInGoogle){
+//                                    if(account != null){
+
+                                        // Final Creator. You may delete Later, has no function
+//                                        FirebaseDatabase.getInstance().reference.child("Creater_Joiner").child(
+//                                            code!!).child("CreaterID").setValue(account!!.id)
+                                    FirebaseDatabase.getInstance().reference.child("Creater_Joiner").child(
+                                        code!!).child("CreaterID").setValue(player.getID())
+
                                     val myBD = MyDatabaseHelper(thiscontxt)
                                     val cursor: Cursor? = myBD.readAllData()
 
-                                    FirebaseDatabase.getInstance().reference.child("Details")
-                                        .child(code!!).child("Creator").child("name").setValue(account!!.displayName)
-                                    FirebaseDatabase.getInstance().reference.child("Details")
-                                        .child(code!!).child("Creator").child("email")
-                                        .setValue(account!!.email)
-                                    FirebaseDatabase.getInstance().reference.child("Details")
-                                        .child(code!!).child("Creator").child("id")
-                                        .setValue(account!!.id)
-                                    FirebaseDatabase.getInstance().reference.child("Details")
-                                        .child(code!!).child("Creator").child("photo")
-                                        .setValue(account!!.photoUrl!!.toString())
+                                    Log.d(TAG, "OnlineConnection Fragment: Google Login....Launching the Invitation Fragment for the Google with cursor value != null")
 
+                                    Toast.makeText(thiscontxt, "Launching Invitation Fragment for Google Login", Toast.LENGTH_SHORT).show()
                                     mListener.turnOn(cursor)
+//                                    }
+                                }else if (signedInGuest){
+
+                                    Log.d(TAG, "OnlineConnection Fragment: Guest Login....Launching the Invitation Fragment for the Guest with cursor value = null")
+                                    Toast.makeText(thiscontxt, "Launching Invitation Fragment for Guest", Toast.LENGTH_SHORT).show()
+                                    mListener.turnOn(null)
                                 }
-
-
 
                             }
                         }, 2000)
@@ -186,7 +173,6 @@ class OnlineConnectionFragment : Fragment(){
                 info.visibility = View.VISIBLE
                 progressBar.visibility = View.GONE
                 Toast.makeText(thiscontxt, "Please Enter a valid Code", Toast.LENGTH_SHORT).show()
-//                Toast.makeText(thiscontxt, "Plz Enter a code to Create a Game", Toast.LENGTH_SHORT).show()
             }
 
 
@@ -209,35 +195,67 @@ class OnlineConnectionFragment : Fragment(){
                 FirebaseDatabase.getInstance().reference.child("codes").addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(p0: DataSnapshot) {
                         val data: Boolean = isValueAvailable(p0, code!!)
-                        val name: String?
-                        val email: String?
                         if (data) {
-                            if (account != null) {
-                                FirebaseDatabase.getInstance().reference.child("Details")
-                                    .child(code!!).child("Joining").child("name")
-                                    .setValue(account!!.displayName)
-                                FirebaseDatabase.getInstance().reference.child("Details")
-                                    .child(code!!).child("Joining").child("email")
-                                    .setValue(account!!.email)
-                                FirebaseDatabase.getInstance().reference.child("Details")
-                                    .child(code!!).child("Joining").child("id")
-                                    .setValue(account!!.id)
-                                FirebaseDatabase.getInstance().reference.child("Details")
-                                    .child(code!!).child("Joining").child("photoURL")
-                                    .setValue(account!!.photoUrl!!.toString())
-
-                            }
+//                            if (signedInGoogle){
+//                                if (account != null) {
+////                                    FirebaseDatabase.getInstance().reference.child("Details")
+////                                        .child(code!!).child("Joining").child("name")
+////                                        .setValue(account!!.displayName)
+////                                    FirebaseDatabase.getInstance().reference.child("Details")
+////                                        .child(code!!).child("Joining").child("email")
+////                                        .setValue(account!!.email)
+////                                    FirebaseDatabase.getInstance().reference.child("Details")
+////                                        .child(code!!).child("Joining").child("id")
+////                                        .setValue(account!!.id)
+////                                    FirebaseDatabase.getInstance().reference.child("Details")
+////                                        .child(code!!).child("Joining").child("photoURL")
+////                                        .setValue(account!!.photoUrl!!.toString())
+//
+//                                }
+//                            }else if (signedInGuest){
+//
+////                                FirebaseDatabase.getInstance().reference.child("Details")
+////                                    .child(code!!).child("Joining").child("name")
+////                                    .setValue(guestName)
+////                                FirebaseDatabase.getInstance().reference.child("Details")
+////                                    .child(code!!).child("Joining").child("email")
+////                                    .setValue("null")
+////                                FirebaseDatabase.getInstance().reference.child("Details")
+////                                    .child(code!!).child("Joining").child("id")
+////                                    .setValue(guestId)
+////                                FirebaseDatabase.getInstance().reference.child("Details")
+////                                    .child(code!!).child("Joining").child("photoURL")
+////                                    .setValue("null")
+//
+//                            }
                             Handler().postDelayed({
                                 if (data) {
                                     codeFound = true
-                                    val arrayList = ArrayList<String> ()
-                                    arrayList.add(account!!.id)
-                                    arrayList.add(account!!.displayName)
-                                    arrayList.add(account!!.email)
-                                    arrayList.add(account!!.photoUrl.toString())
-                                    arrayList.add(myToken.toString())
-                                    FirebaseDatabase.getInstance().reference.child("Joiners").child(
-                                        code!!).child(account!!.id).setValue(arrayList)
+                                    if (signedInGoogle){
+                                        if (account != null) {
+                                            val arrayList = ArrayList<String>()
+                                            arrayList.add(account!!.id!!)
+                                            arrayList.add(account!!.displayName!!)
+                                            arrayList.add(account!!.email!!)
+                                            arrayList.add(account!!.photoUrl!!.toString())
+                                            arrayList.add(myToken.toString())
+                                            FirebaseDatabase.getInstance().reference.child("Joiners")
+                                                .child(code!!)
+                                                .child(account!!.id).setValue(arrayList)
+                                        }
+                                    }else if (signedInGuest){
+                                        val arrayList = ArrayList<String?>()
+                                        arrayList.add(guestId!!)
+                                        arrayList.add(guestName!!)
+                                        arrayList.add("null")
+                                        arrayList.add("null")
+                                        arrayList.add(myToken.toString())
+                                        FirebaseDatabase.getInstance().reference.child("Joiners")
+                                            .child(
+                                                code!!
+                                            ).child(account!!.id!!).setValue(arrayList)
+                                    }
+
 //                                    FirebaseDatabase.getInstance().reference.child("Joiners")
 //                                        .child(code!!).child(
 //                                            account!!.id
@@ -281,8 +299,9 @@ class OnlineConnectionFragment : Fragment(){
                                             TODO("Not yet implemented")
                                         }
 
+                                        @SuppressLint("LongLogTag")
                                         override fun onChildRemoved(snapshot: DataSnapshot) {
-                                            TODO("Not yet implemented")
+                                            Log.d(TAG, "child(\"Creator_cred\"): Child Removed")
                                         }
 
                                         override fun onChildMoved(
@@ -309,31 +328,39 @@ class OnlineConnectionFragment : Fragment(){
                                             Log.d("abcdefgh", "OnChildAddded Listener method clicked for Joining")
 
                                             val child = snapshot.value.toString()
-//                                                val children = snapshot.children
-//                                                Log.d("abcdefgh", "Count = ${children.count()}")
-//                                                val l = ArrayList<String>()
-//                                                children.forEach{
-//                                                    val value = it.value.toString()
-//                                                    Log.d("abcdefgh", "Each Val = $value")
-//                                                    l.add(value)
-//                                                }
-//                                                Log.d("****", "clicked for Joining child value = ${child.count()}")
-//                                                child.forEach {
-//                                                    Toast.makeText(thiscontxt, "Inside for Loop", Toast.LENGTH_SHORT).show()
-//                                                    val value = it.value.toString()
+
                                             Log.d("****", "Reached Comparision point")
 //                                                Log.d("abcdefgh", "Value of l[0] = ${l[0]}")
-                                            if (child == account!!.id!!.toString()) {
-                                                Log.d("****", "Code accepted and user Joining")
-                                                FirebaseDatabase.getInstance().reference.child("Creater_Joiner").child(
-                                                    code!!).child("JoinerID").setValue(account!!.id)
-                                                accepted()
+                                            if(signedInGoogle) {
+                                                if (child == account!!.id!!.toString()) {
+                                                    Log.d("****", "Code accepted and user Joining")
+                                                    FirebaseDatabase.getInstance().reference.child("Creater_Joiner")
+                                                        .child(
+                                                            code!!
+                                                        ).child("JoinerID").setValue(account!!.id)
+                                                    accepted()
 //                                                    introText.visibility = View.VISIBLE
-                                                codeText.visibility = View.VISIBLE
-                                                bCreate.visibility = View.VISIBLE
-                                                bJoin.visibility = View.VISIBLE
-                                                info.visibility = View.VISIBLE
-                                                progressBar.visibility = View.GONE
+                                                    codeText.visibility = View.VISIBLE
+                                                    bCreate.visibility = View.VISIBLE
+                                                    bJoin.visibility = View.VISIBLE
+                                                    info.visibility = View.VISIBLE
+                                                    progressBar.visibility = View.GONE
+                                                }
+                                            }else if (signedInGuest){
+                                                if (child == guestId) {
+                                                    Log.d("****", "Code accepted and user Joining")
+                                                    FirebaseDatabase.getInstance().reference.child("Creater_Joiner")
+                                                        .child(
+                                                            code!!
+                                                        ).child("JoinerID").setValue(guestId)
+                                                    accepted()
+//                                                    introText.visibility = View.VISIBLE
+                                                    codeText.visibility = View.VISIBLE
+                                                    bCreate.visibility = View.VISIBLE
+                                                    bJoin.visibility = View.VISIBLE
+                                                    info.visibility = View.VISIBLE
+                                                    progressBar.visibility = View.GONE
+                                                }
                                             }
 //
                                         }
@@ -345,8 +372,9 @@ class OnlineConnectionFragment : Fragment(){
                                                 TODO("Not yet implemented")
                                             }
 
+                                            @SuppressLint("LongLogTag")
                                             override fun onChildRemoved(snapshot: DataSnapshot) {
-                                                TODO("Not yet implemented")
+                                                Log.d(TAG, "child(\"Play with\"): Child Removed")
                                             }
 
                                             override fun onChildMoved(
@@ -383,16 +411,11 @@ class OnlineConnectionFragment : Fragment(){
 
             }
         }
-
-
-
-
-
     }
 
     fun accepted() {
 //        thiscontxt = view?.context!!
-        startActivity(Intent1(cc, OnlinePlay::class.java))
+        startActivity(Intent1(thiscontxt, OnlinePlay::class.java))
 //        introText.visibility = View.VISIBLE
         codeText.visibility = View.VISIBLE
         bCreate.visibility = View.VISIBLE

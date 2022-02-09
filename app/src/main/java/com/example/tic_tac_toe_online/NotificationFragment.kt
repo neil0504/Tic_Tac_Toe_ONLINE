@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,10 +18,12 @@ private const val TAG = "NotificationFragment"
 lateinit var invitesAdapter: InvitesRecyclerViewAdapter
 class NotificationFragment(notificationCounterText: TextView) : Fragment(R.layout.notification_fragment), FragmentStateCheck {
     var notifCountText = notificationCounterText
-    lateinit var recycler_view: RecyclerView
-    lateinit var thiscontxt: Context
+    private lateinit var recycler_view: RecyclerView
+    private lateinit var thiscontxt: Context
     lateinit var data: ArrayList<Invites>
     lateinit var handler: Handler
+    lateinit var cardView: CardView
+    lateinit var defaultText: TextView
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,14 +32,25 @@ class NotificationFragment(notificationCounterText: TextView) : Fragment(R.layou
         return inflater.inflate(R.layout.notification_fragment, container, false)
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        notifCountText.text = NotificationCounter.setCounterToZero()
         super.onViewCreated(view, savedInstanceState)
-        recycler_view = view.findViewById(R.id.recycler_view)
-        handler = Handler(Looper.getMainLooper())
-        thiscontxt = view.context
-        Toast.makeText(thiscontxt, "Fragment Created", Toast.LENGTH_SHORT).show()
-        initRecyclerView()
-        addDataset()
+
+        notifCountText.text = NotificationCounter.setCounterToZero()
+        cardView = view.findViewById(R.id.cardView)
+        defaultText = view.findViewById(R.id.defaultText)
+        if (signedInGoogle) {
+
+            cardView.visibility = View.VISIBLE
+            defaultText.visibility = View.GONE
+            recycler_view = view.findViewById(R.id.recycler_view)
+            handler = Handler(Looper.getMainLooper())
+            thiscontxt = view.context
+            Toast.makeText(thiscontxt, "Fragment Created", Toast.LENGTH_SHORT).show()
+            initRecyclerView()
+            addDataset()
+        }else{
+            cardView.visibility = View.GONE
+            defaultText.visibility = View.VISIBLE
+        }
 //        val ob = MyDatabaseHelper_Invites(thiscontxt)
 //        MyDatabaseHelper_Invites.setUpdateUIInterfaceListener(object : MyDatabaseHelper_Invites.UpdateUIInterface{
 //            override fun updateUI(position: Int) {

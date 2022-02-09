@@ -11,7 +11,7 @@ android {
 
         multiDexEnabled true // in the defaultConfig {}
         applicationId "com.example.tic_tac_toe_online"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"
@@ -89,5 +89,8 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation("androidx.fragment:fragment-ktx:1.4.0")
 
+//    implementation ‘com.github.duanhong169:colorpicker:1.1.6’
+    implementation('com.github.duanhong169:colorpicker:1.1.6')
+    implementation 'com.github.Dhaval2404:ColorPicker:2.3'
 }
 apply plugin: 'com.google.gms.google-services'

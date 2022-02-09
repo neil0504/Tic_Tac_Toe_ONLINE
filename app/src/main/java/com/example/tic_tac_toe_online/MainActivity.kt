@@ -16,16 +16,14 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.drawerlayout.widget.DrawerLayout
+import androidx.core.view.GravityCompat
+import androidx.fragment.app.commit
+import com.example.tic_tac_toe_online.LoginFragment.LoginFragment
 import com.example.tic_tac_toe_online.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import com.squareup.picasso.Picasso
@@ -41,57 +39,94 @@ var myToken: String? = null
 lateinit var notificationCounterText: TextView
 @SuppressLint("StaticFieldLeak")
 lateinit var MainActivityContext: Context
+
+var signedInGoogle = false
+var signedInGuest = false
+
+var guestId: String = "Guest_1"
+var guestName: String = guestId
+const val guestDrawable = R.drawable.guest
+const val TAG_MAIN_ACTIVITY = "MainActivityTAG"
+lateinit var player: PlayerDetails
 class MainActivity : AppCompatActivity(){
-    lateinit var toggle: ActionBarDrawerToggle
-    val TAG = "*********"
-    private lateinit var logIn: SignInButton
-    private lateinit var logOut: Button
-    private lateinit var googleApiClient: GoogleApiClient
-    private val SIGN_IN = 1
+    private lateinit var toggle: ActionBarDrawerToggle
+
+//    private lateinit var logIn: SignInButton
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private lateinit var img: ImageView
+    private lateinit var profileImg: ImageView
     private lateinit var navigationView: NavigationView
     private lateinit var name: TextView
-    private var signedIn = false
+
     private lateinit var binding: ActivityMainBinding
     var isFragmentOpen by Delegates.notNull<Boolean>()
+    private lateinit var loginFragment: LoginFragment
 
-    private lateinit var fragmentInterface: FragmentStateCheck
 
+    private lateinit var onlineBtn: Button
+    private lateinit var offlineBtn: Button
+
+    private val fragmentManager = supportFragmentManager
+
+//    private lateinit var mListener: SignOutInterface
+//
+//    interface SignOutInterface{
+//        fun signOut()
+//    }
+//
+//    fun setSignOutInterfaceListener(listener: SignOutInterface){
+//        mListener = listener
+//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+//        val fragmentmanagaer = supportFragmentManager
+
         MainActivityContext = this
 
         isFragmentOpen = false
 
-
-        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
+//        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
+        val drawerLayout = binding.drawerLayout
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val bell = toolbar.findViewById<ImageView>(R.id.notif_icon)
+        val view = toolbar.findViewById<View>(R.id.bell)
+        notificationCounterText= view.findViewById(R.id.counter)
+//        navigationView = findViewById(R.id.navigationView)
+        navigationView = binding.navigationView
+        val headerView = LayoutInflater.from(this).inflate(R.layout.nav_header, navigationView, false)
+//        val headerView = navigationView.inflateHeaderView(R.layout.nav_header)
+        navigationView.addHeaderView(headerView)
+        profileImg = headerView.findViewById(R.id.profilePic)
+        name = headerView.findViewById(R.id.name)
+
+
+        // Starting LoginFragment if the User is not Signed In Already as the App starts.
+        loginFragment = LoginFragment(this, profileImg, name)
+
+        loginFragment.setAttachLoginListener(object : LoginFragment.AttachLogin{
+            override fun executeUpdateUI(acc: GoogleSignInAccount?) {
+                updateUI(acc)
+            }
+
+        })
         toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,  R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-//        obj.setUpdateUIInterfaceListener(object : NotificationFragment.UpdateUIInterface{
-//            override fun updateUI(position: Int) {
-//                runOnUiThread {
-//                    invitesAdapter.notifyItemRemoved(position)
-//                }
-//            }
-//        })
-        val bell = toolbar.findViewById<ImageView>(R.id.notif_icon)
-        val view = toolbar.findViewById<View>(R.id.bell)
-        notificationCounterText= view.findViewById(R.id.counter)
+
+        onlineBtn = findViewById(R.id.b_online)
+        offlineBtn = findViewById(R.id.b_offline)
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
         val obj = NotificationFragment(notificationCounterText)
+
         MyDatabaseHelper_Invites.setUpdateUIInterfaceListener(object : MyDatabaseHelper_Invites.UpdateUIInterface{
             override fun updateUI(position: Int) {
-//                handler.post {
-//                    invitesAdapter.notifyItemInserted(position)
-//            }
                 if (isFragmentOpen){
                     obj.state(true)
                 }else{
@@ -114,27 +149,28 @@ class MainActivity : AppCompatActivity(){
             val num = NotificationCounter.increaseNumber()
             notificationCounterText.text = num
             Toast.makeText(this, "Bell Clicked", Toast.LENGTH_SHORT).show()
-            val fragmentManager = supportFragmentManager
+//            val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
             fragmentTransaction.addToBackStack(null)
-            fragmentTransaction.replace(R.id.notif_fragment_container, obj)
+            fragmentTransaction.replace(R.id.notif_fragment_container, obj, "NotificationFragment")
             fragmentTransaction.commit()
         }
-        navigationView = findViewById(R.id.navigationView)
-        // Code to handle selection in 
+        // Code to handle selection in
         navigationView.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.item1 -> {
                     Toast.makeText(this, "Sign Out clicked", Toast.LENGTH_SHORT).show()
-                    if (signedIn)
+                    if (signedInGoogle)
                     {
+//                        mListener.signOut()
                         mGoogleSignInClient.signOut()
-                            .addOnCompleteListener {
-                                if (it.isSuccessful)
+                            .addOnCompleteListener { v ->
+                                if (v.isSuccessful)
                                 {
                                     Toast.makeText(this, "Sign Out successfull", Toast.LENGTH_SHORT).show()
-                                    img.setImageResource(R.drawable.guest)
-                                    name.text = R.string.guest.toString()
+                                    loginFragment.loginAsGuest()
+//                                    profileImg.setImageResource(R.drawable.guest)
+//                                    name.text = getString(R.string.guest)
                                 }
                                 else
                                 {
@@ -145,6 +181,7 @@ class MainActivity : AppCompatActivity(){
                     else{
                         Toast.makeText(this, "No account found to Signout", Toast.LENGTH_SHORT).show()
                     }
+
                 }
                 R.id.invite_new_player ->{
                     Toast.makeText(this, "Sign Out clicked", Toast.LENGTH_SHORT).show()
@@ -154,47 +191,52 @@ class MainActivity : AppCompatActivity(){
                         type = "text/plain"
                     }
                     val shareIntent = Intent.createChooser(sendIntent, null)
+                    drawerLayout.closeDrawer(GravityCompat.START)
                     startActivity(shareIntent)
+                }
+
+                R.id.signIn ->{
+                    val fragmentAlreadyExixts: Boolean
+                    val t = fragmentManager.findFragmentById(R.id.loginFragmentContainer)
+                    fragmentAlreadyExixts = if(t != null){
+                        t.isVisible
+                    }else{
+                        Toast.makeText(this, "t was null", Toast.LENGTH_SHORT).show()
+                        false
+                    }
+
+//                    when(){
+//                        is LoginFragment -> {
+//                            fragmentAlreadyExixts = true
+//                            Toast.makeText(this, "Fragment already exists", Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
+                    if (!signedInGoogle && !fragmentAlreadyExixts){
+                        drawerLayout.closeDrawer(GravityCompat.START)
+                        startFragment()
+                    }
+                    else if (signedInGoogle){
+                        Toast.makeText(this, "U r already Signed In", Toast.LENGTH_SHORT).show()
+                    }
                 }
 
 
             }
             true
         }
-        val online_btn: Button = findViewById(R.id.b_online)
-        val offline_btn: Button = findViewById(R.id.b_offline)
-        logIn = findViewById(R.id.signIn)
 
-
-        navigationView = findViewById(R.id.navigationView)
-        val headerView = LayoutInflater.from(this).inflate(R.layout.nav_header, navigationView, false)
-        navigationView.addHeaderView(headerView)
-
-        img = headerView.findViewById(R.id.profilePic)
-        name = headerView.findViewById(R.id.name)
-
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        logIn.setOnClickListener {
-            signIn()
+        onlineBtn.setOnClickListener {
+            if (signedInGoogle || signedInGuest) {
+                startActivity(Intent(this, OnlineConnection::class.java))
+            }
         }
 
-        val online = View.OnClickListener { v ->
-            val b = v as Button
-            startActivity(Intent(this, OnlineConnection::class.java))
+        offlineBtn.setOnClickListener {
+            if (signedInGoogle || signedInGuest) {
+                startActivity(Intent(this, OfflinePlay::class.java))
+            }
 
         }
-
-        val offline = View.OnClickListener { v ->
-            val b = v as Button
-            val intent = Intent(this, OfflinePlay::class.java)
-            startActivity(intent)
-
-        }
-        online_btn.setOnClickListener(online)
-        offline_btn.setOnClickListener(offline)
-
 
     }
 
@@ -203,56 +245,31 @@ class MainActivity : AppCompatActivity(){
         {
             return true
         }
-        else
-        {
-
-        }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun signIn() {
-        val signInIntent: Intent = mGoogleSignInClient.signInIntent
-        startActivityForResult(signInIntent, SIGN_IN)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == SIGN_IN)
-        {
-            val task: Task<GoogleSignInAccount> =
-                GoogleSignIn.getSignedInAccountFromIntent(data)
-            handleSignInResult(task)
-        }
-    }
-
-    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-        try {
-            val account: GoogleSignInAccount = completedTask.getResult(ApiException::class.java)
-
-            // Signed in successfully, show authenticated UI.
-            updateUI(account)
-        } catch (e: ApiException) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.d(TAG, "signInResult:failed code=" + e.statusCode)
-            updateUI(null)
-        }
-    }
 
     private fun updateUI(acc: GoogleSignInAccount?) {
         if (acc != null) {
+//            Log.d(TAG_MAIN_ACTIVITY, "Inside UpdateUI Method: Name = ${acc.displayName} and profileURL = ${acc.photoUrl}")
             account = acc
-            signedIn = true
-            Picasso.get().load(acc.photoUrl).placeholder(R.mipmap.ic_launcher).into(img)
+            signedInGoogle = true
+            signedInGuest = false
+            player = PlayerDetails(this, acc.id!!, acc.displayName!!, acc.email, acc.photoUrl?: null)
+//            Picasso.get().load(acc.photoUrl).placeholder(R.mipmap.ic_launcher).into(profileImg)
+            Picasso.get().load(player.getPhotoURL()).placeholder(R.mipmap.ic_launcher).into(profileImg)
             name.text = ""
-            name.text = acc.givenName
+//            name.text = acc.displayName
+            name.text = player.getName()
+
+//            val a = PlayerDetails.getInstance(acc.id!!, acc.displayName!!, acc.email!!, acc.photoUrl!!.toString())
 
             FirebaseMessaging.getInstance().isAutoInitEnabled = true
 
             FirebaseMessaging.getInstance().token.addOnSuccessListener { result ->
                 if(result != null){
                     myToken = result
-                    Log.d("TAGGGGG", "Got the Token Creater= $myToken")
+                    Log.d("TAG_MAIN_ACTIVITY", "Got the Token Creater= $myToken")
                     // DO your thing with your firebase token
                 }
             }
@@ -260,23 +277,101 @@ class MainActivity : AppCompatActivity(){
         }
 
     }
+
+    private fun startFragment(){
+        fragmentManager.commit {
+            setCustomAnimations(
+                R.anim.slide_up,
+                R.anim.scale_down
+            )
+            replace(R.id.loginFragmentContainer, loginFragment, "LoginFragment")
+            addToBackStack(null)
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         val account = GoogleSignIn.getLastSignedInAccount(this)
+        Log.d(TAG_MAIN_ACTIVITY, "onStart: Start")
         if (account != null)
         {
             updateUI(account)
-            Log.d(TAG, "account is not null")
+            Log.d(TAG_MAIN_ACTIVITY, "account is not null")
+            signedInGoogle = true
+            signedInGuest = false
+        }else{
+            Log.d(TAG_MAIN_ACTIVITY, "onStart: Start with account = null")
+            signedInGoogle = false
+            signedInGuest = false
+            startFragment()
         }
     }
 
     override fun onBackPressed() {
+//        TODO: If backpressed on Login page as well b4 signing into google (means no SignIn happened as of google or of guest)....fix that
+        val f = fragmentManager.findFragmentById(R.id.loginFragmentContainer)
+        val f1 = fragmentManager.findFragmentById(R.id.notif_fragment_container)
+
+        when(f){
+            is LoginFragment -> {
+                if(!signedInGoogle && !signedInGuest){
+                    loginFragment.loginAsGuest()
+                }
+            }
+        }
+
         if (supportFragmentManager.backStackEntryCount > 0) {
-            supportFragmentManager.popBackStack();
+            supportFragmentManager.popBackStack()
             isFragmentOpen = false
         } else {
-            super.onBackPressed();
+            super.onBackPressed()
         }
     }
+
+    //    private fun signIn() {
+//        val signInIntent: Intent = mGoogleSignInClient.signInIntent
+//        startActivityForResult(signInIntent, SIGN_IN)
+//    }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if(requestCode == SIGN_IN)
+//        {
+//            val task: Task<GoogleSignInAccount> =
+//                GoogleSignIn.getSignedInAccountFromIntent(data)
+//            handleSignInResult(task)
+//        }
+//    }
+
+//    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+//        try {
+//            val account: GoogleSignInAccount = completedTask.getResult(ApiException::class.java)
+//
+//            // Signed in successfully, show authenticated UI.
+//            updateUI(account)
+//        } catch (e: ApiException) {
+//            // The ApiException status code indicates the detailed failure reason.
+//            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+//            Log.d(TAG, "signInResult:failed code=" + e.statusCode)
+//            updateUI(null)
+//        }
+//    }
+
+//    supportFragmentManager.commit {
+//            setCustomAnimations(
+//                enter=R.anim.slide_up,
+//            exit=R.anim.fade_out,
+//            popEnter=R.anim.scale_down,
+//            popExit=R.anim.fade_in)
+//        }
+//        supportFragmentManager.beginTransaction().setCustomAnimations(
+//            enter = R.anim.slide_up,
+//            exit = R.anim.slide_down
+//        popEnter = R.anim).addToBackStack(null).replace(R.id.loginFragmentContainer, loginFragment).commit()
+
+//        logIn.setOnClickListener {
+//            signIn()
+//        }
+
 
 }

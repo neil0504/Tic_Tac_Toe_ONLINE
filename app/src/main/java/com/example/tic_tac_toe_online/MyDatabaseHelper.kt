@@ -10,6 +10,7 @@ import android.widget.Toast
 class MyDatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 //    var DATABASE_NAME: String? = "PreviousPLAYERS.db"
 //    val DATABASE_VERSION = 1
+private val con = context
     override fun onCreate(db: SQLiteDatabase?) {
         val query = "CREATE TABLE IF NOT EXISTS $TABLE_NAME($COLUMN_ID INTEGER PRIMARY KEY NOT NULL," +
                 " $COLUMN_PLAYER_ID TEXT NOT NULL, $COLUMN_PLAYER_NAME TEXT NOT NULL, $COLUMN_PLAYER_EMAIL TEXT NOT NULL," +
@@ -23,7 +24,7 @@ class MyDatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAM
         onCreate(db)
     }
 
-    fun addRecord(playerID: String, playerName: String, playerEmail: String, playerPhotoURL: String, playerToken: String){
+    fun addRecord(playerID: String, playerName: String, playerEmail: String?, playerPhotoURL: String?, playerToken: String){
         val db: SQLiteDatabase = this.writableDatabase
         val cv = ContentValues().apply{
             put(COLUMN_PLAYER_ID, playerID)
@@ -34,9 +35,9 @@ class MyDatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAM
         }
         val result: Long = db.insert(TABLE_NAME, null, cv)
         if(result == "-1".toLong()){
-            Toast.makeText(cc, "Record Addition Failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(con, "Record Addition Failed", Toast.LENGTH_SHORT).show()
         }else{
-            Toast.makeText(cc, "Record Addition Success", Toast.LENGTH_SHORT).show()
+            Toast.makeText(con, "Record Addition Success", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -44,12 +45,10 @@ class MyDatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAM
 //        val query = "SELECT * FROM $TABLE_NAME"
         val db: SQLiteDatabase = this.readableDatabase
         var cursor: Cursor? = null
-        if (db != null){
-            if(arg == null){
-                cursor = db.rawQuery(query, null)
-            }else {
-                cursor = db.rawQuery(query, arrayOf(arg))
-            }
+        cursor = if(arg == null){
+            db.rawQuery(query, null)
+        }else {
+            db.rawQuery(query, arrayOf(arg))
         }
         return cursor
     }
@@ -58,9 +57,9 @@ class MyDatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAM
         val db = this.readableDatabase
         val result = db.delete(TABLE_NAME, "$COLUMN_PLAYER_ID=?", arrayOf(playerID))
         if(result == -1){
-            Toast.makeText(cc, "Record DELETION Failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(con, "Record DELETION Failed", Toast.LENGTH_SHORT).show()
         }else{
-            Toast.makeText(cc, "Record DELETION Success", Toast.LENGTH_SHORT).show()
+            Toast.makeText(con, "Record DELETION Success", Toast.LENGTH_SHORT).show()
         }
     }
     companion object{
@@ -73,6 +72,6 @@ class MyDatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAM
         private const val COLUMN_PLAYER_EMAIL = "playerEmail"
         private const val COLUMN_PLAYER_PHOTOURL = "playerPhotoURL"
         private const val COLUMN_PLAYER_TOKEN = "playerToken"
-        private val context = this
+//        private val context = this
     }
 }

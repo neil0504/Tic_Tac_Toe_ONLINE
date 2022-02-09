@@ -1,4 +1,4 @@
-package com.example.tic_tac_toe_online
+package com.example.tic_tac_toe_online.Temp
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.tic_tac_toe_online.R
 
 class BlogRecyclerViewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var items: ArrayList<Blog> = ArrayList()

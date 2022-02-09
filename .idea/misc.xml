@@ -26,9 +26,11 @@
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/app_bar_main.xml" value="0.14855072463768115" />
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/appbar.xml" value="0.4" />
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/content_main.xml" value="0.14855072463768115" />
+        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/content_temp_delete.xml" value="0.25" />
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_blog.xml" value="0.264" />
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_invitation.xml" value="0.2463768115942029" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_login.xml" value="0.14855072463768115" />
+        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_login.xml" value="0.264" />
+        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_login_temp.xml" value="0.25" />
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_notification.xml" value="0.25" />
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_online_connection.xml" value="0.25" />
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_temp.xml" value="0.25" />
@@ -41,6 +43,9 @@
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/notification.xml" value="0.17255434782608695" />
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/notification_fragment.xml" value="0.2378167641325536" />
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/rv1_items.xml" value="0.2463768115942029" />
+        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/menu/activity_main_drawer.xml" value="0.25" />
+        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/menu/main.xml" value="0.25" />
+        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/menu/main2.xml" value="0.25" />
         <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/menu/nav_drawer_menu.xml" value="0.24615384615384617" />
       </map>
     </option>

@@ -1,41 +1,23 @@
 package com.example.tic_tac_toe_online
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.database.Cursor
 import android.os.Bundle
 import android.util.Log
-import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.fragment.app.FragmentContainerView
-import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 
-var cc: Context? = null
-var joiningCode: String? = null
+//var cc: Context? = null
+var joiningCodeFromIntent: String? = null
 class OnlineConnection : AppCompatActivity() {
-    private lateinit var introText: TextView
-    private lateinit var codeText: EditText
-    private lateinit var bJoin: Button
-    private lateinit var bCreate: Button
-    private lateinit var progressBar: ProgressBar
-    private lateinit var info: ImageView
-    private lateinit var cordLayout: CoordinatorLayout
-    private lateinit var container: FragmentContainerView
-    private lateinit var linearLayoutContainer: LinearLayout
-    lateinit var recycler_view2: RecyclerView
-    lateinit var recycler_view1: RecyclerView
-    lateinit var invitationFragment_InvitesAdapter: InvitationFragment_Invites_RecyclerViewAdapter
-    lateinit var invitationfragment_LobbyRecyclerviewAdapter: InvitationFragment_Lobby_RecyclerView_Adapter
-    lateinit var playBtn: Button
-    lateinit var data: ArrayList<InvitationFragment_Lobby>
-    var itemSelected = false
+    private val TAG = "OnlineConnectionTAGTAG"
 
-    private var idd: String? = null
-    private var name: String? = null
-    private var email: String? = null
-    private var photo_URL: String? = null
+    lateinit var data: ArrayList<InvitationFragment_Lobby>
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,11 +27,172 @@ class OnlineConnection : AppCompatActivity() {
         // New code when user clicks Notification and code is passed in intent
         val c = intent.extras
         if (c != null){
-            joiningCode = c.get("code") as String?
+            joiningCodeFromIntent = c.get("code") as String?
         }
         else{
-            joiningCode = null
+            joiningCodeFromIntent = null
         }
+
+//        cc = this
+
+        val obj = OnlineConnectionFragment()
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+//        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.replace(R.id.invitationContainer, obj)
+        fragmentTransaction.commit()
+
+        obj.setTurnOnFragment(object : OnlineConnectionFragment.TurnOnFragment{
+            override fun turnOn(cursor: Cursor?) {
+                val obj2 = InvitationFragment(cursor)
+
+//                supportFragmentManager.commit {
+//                    setReorderingAllowed(true)
+//                    // Replace whatever is in the fragment_container view with this fragment
+//                    replace<InvitationFragment>(R.id.invitationContainer, obj2)
+//                }
+                supportFragmentManager.beginTransaction().addToBackStack(null).replace(R.id.invitationContainer, obj2).commit()
+            }
+
+        })
+
+
+    }
+
+    override fun onBackPressed() {
+        when(supportFragmentManager.findFragmentById(R.id.invitationContainer)){
+            is OnlineConnectionFragment -> {
+                Log.d(TAG, "BackPressed from OnlineConnectionFragment")
+
+            }
+            is InvitationFragment -> {
+                Log.d(TAG, "BackPressed from InvitationFragment")
+                FirebaseDatabase.getInstance().reference.child("codes").addListenerForSingleValueEvent(object :
+                    ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val data = snapshot.children
+//                        snapshot.child("codes/$code").ref.removeValue()
+                        data.forEach {
+                            if (it.value == code!!){
+                                it.ref.removeValue()
+                                Log.d("05042", "Child Removed for Code")
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+
+                })
+//                FirebaseDatabase.getInstance().reference.child("codes").child(code!!).removeValue()
+                FirebaseDatabase.getInstance().reference.child("Creater_Joiner").child(code!!).removeValue()
+//                FirebaseDatabase.getInstance().reference.child("").child(code!!).removeValue()
+            }
+        }
+        super.onBackPressed()
+    }
+
+//    private fun addDataset2(sharedPreferences: SharedPreferences?) {
+//        Log.d("*****", "Inside addDataset 2 method")
+//        val data = DataSource_for_rv2_Invitation_Fragment.createDataSet(sharedPreferences)
+//        invitationFragment_InvitesAdapter.submitList(data)
+//    }
+//
+//    private fun initRecyclerView2() {
+//        Log.d("*****", "Inside Init Recycler View 2 method")
+//        recycler_view2.apply {
+//            layoutManager = LinearLayoutManager(this@OnlineConnection)
+//            val topSpacingItemDecoration = TopSpacingItemDecoration(30)
+//            addItemDecoration(topSpacingItemDecoration)
+//            invitationFragment_InvitesAdapter = InvitationFragment_Invites_RecyclerViewAdapter()
+//            adapter = invitationFragment_InvitesAdapter
+//        }
+//    }
+//
+//    private fun addDataset1() {
+//        Log.d("*****", "Inside addDataset 1 method")
+//        data = DataSource_for_rv1_Invitation_Fragment.createDataSet()
+//        invitationfragment_LobbyRecyclerviewAdapter.submitList(data)
+//    }
+//
+//    private fun initRecyclerView1() {
+//        Log.d("*****", "Inside Init Recycler View 1 method")
+//        recycler_view1.apply {
+//            layoutManager = LinearLayoutManager(this@OnlineConnection)
+//            val topSpacingItemDecoration = TopSpacingItemDecoration(30)
+//            addItemDecoration(topSpacingItemDecoration)
+//            invitationfragment_LobbyRecyclerviewAdapter = InvitationFragment_Lobby_RecyclerView_Adapter()
+//            adapter = invitationfragment_LobbyRecyclerviewAdapter
+////            invitationfragment_LobbyRecyclerviewAdapter.setOnClickListenerr(InvitationFragment_Lobby_RecyclerView_Adapter.OnRowSelect{
+//
+////            })
+//            invitationfragment_LobbyRecyclerviewAdapter.setOnItemListenerr(object : InvitationFragment_Lobby_RecyclerView_Adapter.OnItemClickListener{
+//                override fun onItemClick(position: Int) {
+//                    Toast.makeText(this@OnlineConnection, "Row clicked", Toast.LENGTH_SHORT).show()
+//                    itemSelected = true
+//                    val obj = data[position]
+//                    idd = obj.id
+//                    name = obj.name
+//                    email = obj.email
+//                    photo_URL = obj.photo_URL
+//                }
+//
+//            })
+//
+//        }
+//    }
+
+//    private fun addFragment(sp: SharedPreferences?) {
+//        val obj = InvitationFragment(sp)
+//        supportFragmentManager.beginTransaction().replace(R.id.invitationContainer, obj, "ABC").commit()
+//    }
+
+//    private fun accepted()
+//    {
+//        startActivity(Intent(this, OnlinePlay::class.java))
+//        introText.visibility = View.VISIBLE
+//        codeText.visibility = View.VISIBLE
+//        bCreate.visibility = View.VISIBLE
+//        bJoin.visibility = View.VISIBLE
+//        info.visibility = View.VISIBLE
+//        progressBar.visibility = View.GONE
+//    }
+//
+//    private fun isValueAvailable(snapshot: DataSnapshot, code: String): Boolean
+//    {
+//        val data = snapshot.children
+//        data.forEach {
+//            val value = it.value.toString()
+//            if (value == code)
+//            {
+//                keyValue = it.key.toString()
+//                return true
+//            }
+//        }
+//        return false
+//    }
+}
+
+//    private lateinit var introText: TextView
+//    private lateinit var codeText: EditText
+//    private lateinit var bJoin: Button
+//    private lateinit var bCreate: Button
+//    private lateinit var progressBar: ProgressBar
+//    private lateinit var info: ImageView
+//    private lateinit var cordLayout: CoordinatorLayout
+//    private lateinit var container: FragmentContainerView
+//    private lateinit var linearLayoutContainer: LinearLayout
+//    lateinit var recycler_view2: RecyclerView
+//    lateinit var recycler_view1: RecyclerView
+//    lateinit var invitationFragment_InvitesAdapter: InvitationFragment_Invites_RecyclerViewAdapter
+//    lateinit var invitationfragment_LobbyRecyclerviewAdapter: InvitationFragment_Lobby_RecyclerView_Adapter
+
+//    private var idd: String? = null
+//    private var name: String? = null
+//private var email: String? = null
+//private var photo_URL: String? = null
+//lateinit var playBtn: Button
 
 
 //        introText = findViewById(R.id.textView)
@@ -62,7 +205,7 @@ class OnlineConnection : AppCompatActivity() {
 //        container = findViewById(R.id.invitationContainer)
 //        linearLayoutContainer = findViewById(R.id.linearLayoutContainer)
 //        linearLayoutContainer.visibility = View.VISIBLE
-        cc = this
+
 //        playBtn = findViewById(R.id.playButton)
 //        recycler_view2 = findViewById(R.id.rv2_invites)
 //        recycler_view1 = findViewById(R.id.rv1_lobby)
@@ -82,25 +225,7 @@ class OnlineConnection : AppCompatActivity() {
 //
 //            v?.onTouchEvent(event) ?: true
 //        }
-        val obj = OnlineConnectionFragment()
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.invitationContainer, obj)
-        fragmentTransaction.commit()
 
-        obj.setTurnOnFragment(object : OnlineConnectionFragment.TurnOnFragment{
-            override fun turnOn(cursor: Cursor?) {
-                val obj2 = InvitationFragment(cursor)
-
-//                supportFragmentManager.commit {
-//                    setReorderingAllowed(true)
-//                    // Replace whatever is in the fragment_container view with this fragment
-//                    replace<InvitationFragment>(R.id.invitationContainer, obj2)
-//                }
-                supportFragmentManager.beginTransaction().replace(R.id.invitationContainer, obj2).commit()
-            }
-
-        })
 //        bCreate.setOnClickListener {
 //            code = null
 //            codeFound = false
@@ -369,86 +494,3 @@ class OnlineConnection : AppCompatActivity() {
 //                Toast.makeText(this, "Please enter a valid code", Toast.LENGTH_SHORT).show()
 //            }
 //        }
-
-    }
-
-//    private fun addDataset2(sharedPreferences: SharedPreferences?) {
-//        Log.d("*****", "Inside addDataset 2 method")
-//        val data = DataSource_for_rv2_Invitation_Fragment.createDataSet(sharedPreferences)
-//        invitationFragment_InvitesAdapter.submitList(data)
-//    }
-//
-//    private fun initRecyclerView2() {
-//        Log.d("*****", "Inside Init Recycler View 2 method")
-//        recycler_view2.apply {
-//            layoutManager = LinearLayoutManager(this@OnlineConnection)
-//            val topSpacingItemDecoration = TopSpacingItemDecoration(30)
-//            addItemDecoration(topSpacingItemDecoration)
-//            invitationFragment_InvitesAdapter = InvitationFragment_Invites_RecyclerViewAdapter()
-//            adapter = invitationFragment_InvitesAdapter
-//        }
-//    }
-//
-//    private fun addDataset1() {
-//        Log.d("*****", "Inside addDataset 1 method")
-//        data = DataSource_for_rv1_Invitation_Fragment.createDataSet()
-//        invitationfragment_LobbyRecyclerviewAdapter.submitList(data)
-//    }
-//
-//    private fun initRecyclerView1() {
-//        Log.d("*****", "Inside Init Recycler View 1 method")
-//        recycler_view1.apply {
-//            layoutManager = LinearLayoutManager(this@OnlineConnection)
-//            val topSpacingItemDecoration = TopSpacingItemDecoration(30)
-//            addItemDecoration(topSpacingItemDecoration)
-//            invitationfragment_LobbyRecyclerviewAdapter = InvitationFragment_Lobby_RecyclerView_Adapter()
-//            adapter = invitationfragment_LobbyRecyclerviewAdapter
-////            invitationfragment_LobbyRecyclerviewAdapter.setOnClickListenerr(InvitationFragment_Lobby_RecyclerView_Adapter.OnRowSelect{
-//
-////            })
-//            invitationfragment_LobbyRecyclerviewAdapter.setOnItemListenerr(object : InvitationFragment_Lobby_RecyclerView_Adapter.OnItemClickListener{
-//                override fun onItemClick(position: Int) {
-//                    Toast.makeText(this@OnlineConnection, "Row clicked", Toast.LENGTH_SHORT).show()
-//                    itemSelected = true
-//                    val obj = data[position]
-//                    idd = obj.id
-//                    name = obj.name
-//                    email = obj.email
-//                    photo_URL = obj.photo_URL
-//                }
-//
-//            })
-//
-//        }
-//    }
-
-//    private fun addFragment(sp: SharedPreferences?) {
-//        val obj = InvitationFragment(sp)
-//        supportFragmentManager.beginTransaction().replace(R.id.invitationContainer, obj, "ABC").commit()
-//    }
-
-//    private fun accepted()
-//    {
-//        startActivity(Intent(this, OnlinePlay::class.java))
-//        introText.visibility = View.VISIBLE
-//        codeText.visibility = View.VISIBLE
-//        bCreate.visibility = View.VISIBLE
-//        bJoin.visibility = View.VISIBLE
-//        info.visibility = View.VISIBLE
-//        progressBar.visibility = View.GONE
-//    }
-//
-//    private fun isValueAvailable(snapshot: DataSnapshot, code: String): Boolean
-//    {
-//        val data = snapshot.children
-//        data.forEach {
-//            val value = it.value.toString()
-//            if (value == code)
-//            {
-//                keyValue = it.key.toString()
-//                return true
-//            }
-//        }
-//        return false
-//    }
-}

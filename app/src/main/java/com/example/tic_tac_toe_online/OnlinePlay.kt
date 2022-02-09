@@ -1,11 +1,11 @@
 package com.example.tic_tac_toe_online
 
-import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -13,7 +13,10 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.github.dhaval2404.colorpicker.ColorPickerDialog
+import com.github.dhaval2404.colorpicker.model.ColorShape
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import kotlin.system.exitProcess
@@ -24,6 +27,7 @@ class OnlinePlay : AppCompatActivity() {
 
     val TAG: String = "OnlinePlay"
 
+    private lateinit var fab: FloatingActionButton
     private var winnerX = false
     private var winnerO = false
     private var winnerTie = false
@@ -121,29 +125,81 @@ class OnlinePlay : AppCompatActivity() {
     private lateinit var winMusic: MediaPlayer
     private lateinit var looseMusic: MediaPlayer
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
-    var id_stringsetC: MutableSet<String?>? =  mutableSetOf()
-    var name_stringsetC: MutableSet<String?>? =  mutableSetOf()
-    var email_stringsetC: MutableSet<String?>? = mutableSetOf()
-    var photoURL_stringsetC: MutableSet<String?>? = mutableSetOf()
-    var id_stringsetJ: MutableSet<String?>? = mutableSetOf()
-    var name_stringsetJ: MutableSet<String?>? = mutableSetOf()
-    var email_stringsetJ: MutableSet<String?>? = mutableSetOf()
-    var photoURL_stringsetJ: MutableSet<String?>? = mutableSetOf()
-    var name_C: String? = null
-    var email_C: String? = null
-    var id_C: String? = null
-    var photoURL_C: String? = null
-    var name_J: String? = null
-    var email_J: String? = null
-    var id_J: String? = null
-    var photoURL_J: String? = null
+    private var mDefaultColor = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_online_play)
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+
+        fab = findViewById(R.id.floating_action_button)
+
+
+        fab.setOnClickListener {
+//            ColorPickerPopup.Builder(this)
+//                .initialColor(Color.RED) // set initial color
+//                        // of the color
+//                        // picker dialog
+//                .enableBrightness(
+//                            true
+//                        ) // enable color brightness
+//                        // slider or not
+//                .enableAlpha(
+//                            true
+//                        ) // enable color alpha
+//                        // changer on slider or
+//                        // not
+//                .okTitle(
+//                            "Choose Theme"
+//                        ) // this is top right
+//                        // Choose button
+//                .cancelTitle(
+//                            "Cancel"
+//                        ) // this is top left
+//                        // Cancel button which
+//                        // closes the
+//                .showIndicator(true)
+//                // this is the small box
+//                // which shows the chosen
+//                // color by user at the
+//                // bottom of the cancel
+//                // button
+//                .showValue(true)
+//                // this is the value which
+//                // shows the selected
+//                // color hex code
+//                // the above all values can be made
+//                // false to disable them on the
+//                // color picker dialog.
+//                .build()
+//                .show(
+//                    it,
+//                    object : ColorPickerPopup.ColorPickerObserver() {
+//                        override fun onColorPicked(color: Int) {
+//                                // set the color
+//                                // which is returned
+//                                // by the color
+//                                // picker
+//                                mDefaultColor = color
+//
+//                                // now as soon as
+//                                // the dialog closes
+//                                // set the preview
+//                                // box to returned
+//                                // color
+////                                    mColorPreview.setBackgroundColor(mDefaultColor)
+//                            }
+//                        })
+            ColorPickerDialog
+                .Builder(this)        				// Pass Activity Instance
+                .setTitle("Pick Theme")           	// Default "Choose Color"
+                .setColorShape(ColorShape.SQAURE)   // Default ColorShape.CIRCLE
+                .setDefaultColor(mDefaultColor)     // Pass Default Color
+                .setColorListener { color, colorHex ->
+                    // Handle Color Selection
+                }
+                .show()
+        }
 
         layout = findViewById(R.id.constaintLayout2)
 
@@ -211,7 +267,8 @@ class OnlinePlay : AppCompatActivity() {
 
         if(isMymove)
         {
-            if (account!= null) {
+            if (signedInGoogle) {
+                if (account != null) {
 //                var sharedPreferences = getSharedPreferences(account!!.id, Context.MODE_WORLD_READABLE)
 //                Log.d("DATASOURCE_INVITES", "Shared Preferances Value in Online PLay = $sharedPreferences")
 //                id_stringsetC = sharedPreferences.getStringSet("ID", null)
@@ -222,28 +279,34 @@ class OnlinePlay : AppCompatActivity() {
 //                Log.d("INCREATOR", "namee set = $name_stringsetC")
 //                Log.d("INCREATOR", "email set = $email_stringsetC")
 //                Log.d("INCREATOR", "photo_URL set = $photoURL_stringsetC")
-                val myBD = MyDatabaseHelper(this)
-                myBD.addRecord(joinerID, joinerName, joinerEmail, joinerPhotoURL, joinerToken)
+                    val myBD = MyDatabaseHelper(this)
+                    myBD.addRecord(joinerID, joinerName, joinerEmail, joinerPhotoURL, joinerToken)
 
+                }
             }
 
-            Toast.makeText(this, "You are the Creator. U r playing with $name_J with email: $email_J", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "You are the Creator. U r playing with $joinerName with email: $joinerEmail", Toast.LENGTH_LONG).show()
             turn.text = "Your Turn"
             instruction.text = "Your Shape : X"
             codeText.text = "CODE : $code"
 
         }
         else {
-
-            if (account != null) {
-                val myBD = MyDatabaseHelper(this)
-                myBD.addRecord(creatorID, creatorName, creatorEmail, creatorPhotoURL, creatorToken)
-
-                turn.text = "Opponent's Turn"
-                instruction.text = "Your Shape : O"
-                codeText.visibility = View.GONE
-
+            if (signedInGoogle) {
+                if (account != null) {
+                    val myBD = MyDatabaseHelper(this)
+                    myBD.addRecord(
+                        creatorID,
+                        creatorName,
+                        creatorEmail,
+                        creatorPhotoURL,
+                        creatorToken
+                    )
+                }
             }
+            turn.text = "Opponent's Turn"
+            instruction.text = "Your Shape : O"
+            codeText.visibility = View.GONE
         }
 
         name.alpha = 0f
@@ -959,31 +1022,6 @@ class OnlinePlay : AppCompatActivity() {
         button9.setOnClickListener(b9)
     }
 
-    private fun attachValuesCreator(l: ArrayList<String>) {
-        name_C = l[1]
-        email_C = l[2]
-        id_C = l[0]
-        photoURL_C = l[3]
-    }
-
-    private fun attachValuesJoiner(l: ArrayList<String>) {
-        name_J = l[1]
-        email_J = l[2]
-        id_J = l[0]
-        photoURL_J = l[3]
-    }
-
-    private fun getDetails(snapshot: DataSnapshot): ArrayList<String> {
-        val dt = snapshot.children
-        val l = ArrayList<String>()
-        dt.forEach {
-            val value = it.value.toString()
-            l.add(value)
-
-        }
-        return l
-    }
-
     private fun imageFinder(img: Drawable): Int {
         return when (img) {
             drawableOb -> 1
@@ -1036,7 +1074,7 @@ class OnlinePlay : AppCompatActivity() {
                 Snackbar.make(layout, "You Win !!", Snackbar.LENGTH_LONG)
                     .setAnchorView(layout).show()
                 winMusic.start()
-                Handler().postDelayed({
+                Handler(Looper.getMainLooper()).postDelayed({
                     winMusic.release()
                     reStart() }, 2000)
             } else
@@ -1044,7 +1082,7 @@ class OnlinePlay : AppCompatActivity() {
                 Snackbar.make(layout, "You Loose. Opponent Wins", Snackbar.LENGTH_LONG)
                     .setAnchorView(layout).show()
                 looseMusic.start()
-                Handler().postDelayed({
+                Handler(Looper.getMainLooper()).postDelayed({
                     looseMusic.release()
                     reStart() }, 2000)
             }
@@ -1056,7 +1094,7 @@ class OnlinePlay : AppCompatActivity() {
                     .setAnchorView(layout).show()
                 winMusic.start()
 
-                Handler().postDelayed({
+                Handler(Looper.getMainLooper()).postDelayed({
                     winMusic.release()
                     reStart() }, 2000)
             } else
@@ -1064,7 +1102,7 @@ class OnlinePlay : AppCompatActivity() {
                 Snackbar.make(layout, "You Loose. Opponent Wins", Snackbar.LENGTH_LONG)
                     .setAnchorView(layout).show()
                 looseMusic.start()
-                Handler().postDelayed({
+                Handler(Looper.getMainLooper()).postDelayed({
                     looseMusic.release()
                     reStart() }, 2000)
             }
@@ -1075,7 +1113,7 @@ class OnlinePlay : AppCompatActivity() {
                 .setAnchorView(layout).show()
             looseMusic.start()
 
-            Handler().postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 looseMusic.release()
                 reStart() }, 2000)
         }
@@ -1084,7 +1122,6 @@ class OnlinePlay : AppCompatActivity() {
     }
 
     private fun checkWinner() {
-        var text = ""
 
         if (((idArray[0] == 1 || idArray[0] == 2 || idArray[0] == 3)
                     && (idArray[3] == 1 || idArray[3] == 2 || idArray[3] == 3)
@@ -1200,7 +1237,7 @@ class OnlinePlay : AppCompatActivity() {
             count += 1
             val buttonID: Int = data[1]
 
-            var buttonIndex: Int
+            val buttonIndex: Int
             when(buttonID){
                 button1.id -> {
                     buttonIndex = 0
@@ -1379,9 +1416,15 @@ class OnlinePlay : AppCompatActivity() {
                 removeCode()
                 if (isCodemaker)
                 {
+                    FirebaseDatabase.getInstance().reference.child("codes").child(code!!).removeValue()
+                    FirebaseDatabase.getInstance().reference.child("Creater_Joiner").child(code!!).removeValue()
                     FirebaseDatabase.getInstance().reference.child("data").child(code!!).removeValue()
                     FirebaseDatabase.getInstance().reference.child("isTurnInverted").child(code!!).removeValue()
                     FirebaseDatabase.getInstance().reference.child("Board Reset").child(code!!).removeValue()
+                    FirebaseDatabase.getInstance().reference.child("Joiners").child(code!!).removeValue()
+                    FirebaseDatabase.getInstance().reference.child("Creator_cred").child(code!!).removeValue()
+                    FirebaseDatabase.getInstance().reference.child("Play with").child(code!!).removeValue()
+
                 }
                 exitProcess(0) }
             .setNegativeButton("NO") { dialog, which ->

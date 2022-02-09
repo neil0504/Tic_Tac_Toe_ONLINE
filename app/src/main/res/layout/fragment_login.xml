@@ -7,20 +7,41 @@
     tools:context=".LoginFragment.LoginFragment"
     android:layout_gravity="bottom"
     android:padding="15dp"
-    android:orientation="horizontal">
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:elevation="10dp">
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/googleSignIn"
-        android:layout_width="0dp"
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:text="SIGN IN OPTIONS"
+        android:gravity="center_horizontal"
+        android:textSize="20sp"
+        android:fontFamily="@font/aclonica"
+        android:textStyle="bold"
         />
-
-    <Button
-        android:id="@+id/guestLogIn"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/googleSignIn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
 
+        <Button
+            android:id="@+id/guestLogIn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="15dp"
+            android:text="GUEST"
+            android:textStyle="bold"
+            android:fontFamily="@font/aclonica"
+            android:textSize="20sp"
+            />
+    </LinearLayout>
 
 </LinearLayout>

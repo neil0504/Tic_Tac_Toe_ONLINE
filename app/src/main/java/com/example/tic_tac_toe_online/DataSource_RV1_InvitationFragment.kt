@@ -6,7 +6,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 
-class DataSource_for_rv1_Invitation_Fragment {
+class DataSource_RV1_InvitationFragment {
     companion object {
         var id_: String? = null
         var name: String? = null
@@ -29,21 +29,19 @@ class DataSource_for_rv1_Invitation_Fragment {
                     }
 
                     Log.d("*****:", "Value : $childs")
-                    if(childs != null) {
-                        email = l[2]
-                        id_ = l[0]
-                        name = l[1]
-                        photoURL = l[3]
-                        token = l[4]
-                        Log.d("****", "Value of email: $email, Value of ID: $id_,Value of name: $name, Value of photoURL: $photoURL ")
-                    }
-                    else{
-                        id_ = null
-                        name = null
-                        email = null
-                        photoURL = null
-                        token = null
-                    }
+                    email = l[2]
+                    id_ = l[0]
+                    name = l[1]
+                    photoURL = l[3]
+                    token = l[4]
+                    Log.d("****", "Value of email: $email, Value of ID: $id_,Value of name: $name, Value of photoURL: $photoURL ")
+                    //                    else{
+//                        id_ = null
+//                        name = null
+//                        email = null
+//                        photoURL = null
+//                        token = null
+//                    }
                     data_Lobby.add(0, InvitationFragment_Lobby(
                             id_,
                             name,
