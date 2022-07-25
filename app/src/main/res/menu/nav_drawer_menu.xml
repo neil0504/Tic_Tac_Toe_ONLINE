@@ -5,7 +5,7 @@
         android:icon="@drawable/log_in"
         android:title="Sign In"/>
     <item
-        android:id="@+id/item1"
+        android:id="@+id/signOut"
         android:icon="@drawable/logout"
         android:title="@string/signOut"/>
     <item

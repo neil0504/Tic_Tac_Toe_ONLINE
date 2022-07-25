@@ -1,56 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="CodeInsightWorkspaceSettings">
-    <option name="optimizeImportsOnTheFly" value="true" />
-  </component>
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/drawable-v24/button_botder_light.xml" value="0.12314814814814815" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/drawable-v24/symbol_border.xml" value="0.12314814814814815" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/drawable/backgroung.xml" value="0.12129629629629629" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/drawable/button_shape.xml" value="0.12129629629629629" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/drawable/divider.xml" value="0.2911458333333333" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/drawable/dividerVertical.xml" value="0.12314814814814815" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/drawable/divider_vertical.xml" value="0.12129629629629629" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/drawable/ic_baseline_notifications_24.xml" value="0.26614583333333336" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout-land/activity_main.xml" value="0.264" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout-land/activity_online_connection.xml" value="0.3729166666666667" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout-v17/activity_main.xml" value="0.12158054711246201" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout-v17/rv2_items.xml" value="0.2463768115942029" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/activity_main.xml" value="0.2" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/activity_offline_play.xml" value="0.264" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/activity_online_connection.xml" value="0.264" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/activity_online_play.xml" value="0.264" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/activity_test.xml" value="0.264" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/app_bar_main.xml" value="0.14855072463768115" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/appbar.xml" value="0.4" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/content_main.xml" value="0.14855072463768115" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/content_temp_delete.xml" value="0.25" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_blog.xml" value="0.264" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_invitation.xml" value="0.2463768115942029" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_login.xml" value="0.264" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_login_temp.xml" value="0.25" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_notification.xml" value="0.25" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_online_connection.xml" value="0.25" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_temp.xml" value="0.25" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/invitation_fragment.xml" value="0.2463768115942029" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/invites_list.xml" value="0.16621376811594202" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/list_items.xml" value="0.2" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/nav_header.xml" value="0.4" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/nav_header_main.xml" value="0.14855072463768115" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/notif_bell.xml" value="1.0" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/notification.xml" value="0.17255434782608695" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/notification_fragment.xml" value="0.2378167641325536" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/rv1_items.xml" value="0.2463768115942029" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/menu/activity_main_drawer.xml" value="0.25" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/menu/main.xml" value="0.25" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/menu/main2.xml" value="0.25" />
-        <entry key="..\:/Tic_Tac_Toe_ONLINE/app/src/main/res/menu/nav_drawer_menu.xml" value="0.24615384615384617" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout-v17/rv2_items.xml" value="0.23229166666666667" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/activity_main.xml" value="0.23229166666666667" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/activity_offline_play.xml" value="0.1" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/activity_online_connection.xml" value="0.1" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/activity_online_play.xml" value="0.1" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/activity_splash_screen.xml" value="0.21822916666666667" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_blog.xml" value="0.1" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_invitation.xml" value="0.1" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_login.xml" value="0.1" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_login_temp.xml" value="0.1" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/fragment_second.xml" value="0.22826086956521738" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/invites_list.xml" value="0.2" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/list_items.xml" value="0.23229166666666667" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/nav_header.xml" value="0.22826086956521738" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/notification_fragment.xml" value="0.1" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/layout/rv1_items.xml" value="0.23229166666666667" />
+        <entry key="..\:/TicTacToe_AnotherTry/Tic_Tac_Toe_ONLINE/app/src/main/res/menu/nav_drawer_menu.xml" value="0.23229166666666667" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="Android API 30 Platform" project-jdk-type="Android SDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
